@@ -3,8 +3,10 @@
 
 #include <vector>
 #include <sstream>
+#include <functional>
 
 #include <dune/common/exceptions.hh>
+#include <dune/common/std/functional.hh>
 
 #include <dune/geometry/typeindex.hh>
 
@@ -60,25 +62,41 @@ namespace Dune {
 
       }
 
-      template<typename LFS, typename Data>
+      template<typename LFS, typename Data, typename GV>
       class DGFTreeLeafFunction;
 
-      template<typename LFS, typename Data>
+      template<typename LFS, typename Data, typename GV>
       class DGFTreeVectorFunction;
 
       template<typename VTKWriter, typename Data>
       struct OutputCollector;
 
-
-      //! Helper class for common data of a DGFTree.
-      template<typename GFS, typename X, typename Pred>
-      class DGFTreeCommonData
+      /**
+       * @brief Helper class for common data of a DGFTree.
+       *
+       * @tparam GFS      GridFunctionSpace type
+       * @tparam X        Vector type
+       * @tparam Pred     Predicate for deciding which nodes will be written
+       * @tparam GV       GridView to write the vtk data
+       * @tparam ET       Entity transformation
+       *
+       * @note If GV is not the same as the GFS gridview, the entity transformation
+       * must be able to take an entity from the GFS grid view and return an entity
+       * from the VTK grid view. For instance, for a multidomain grid, the following
+       * etity transformation would make possible to write data from GFS with a host
+       * domain grid view into a one of the subdomains of the multidomain grid:
+       * @code{.cpp}
+       *   auto etity_transformation = [&](auto e){return grid->multiDomainEntity(e);};
+       * @endcode
+       */
+      template<typename GFS, typename X, typename Pred, typename GV, typename ET = Std::identity>
+      struct DGFTreeCommonData
       {
 
-        template<typename LFS, typename Data>
+        template<typename LFS, typename Data,typename _GV>
         friend class DGFTreeLeafFunction;
 
-        template<typename LFS, typename Data>
+        template<typename LFS, typename Data, typename _GV>
         friend class DGFTreeVectorFunction;
 
         template<typename, typename>
@@ -88,37 +106,48 @@ namespace Dune {
         typedef LFSIndexCache<LFS> LFSCache;
         typedef typename X::template ConstLocalView<LFSCache> XView;
         typedef LocalVector<typename X::ElementType> XLocalVector;
-        using EntitySet = typename GFS::Traits::EntitySet;
-        using Cell = typename EntitySet::Traits::Element;
-        using IndexSet = typename EntitySet::Traits::IndexSet;
+        using Cell = typename GV::template Codim<0>::Entity;
+        using IndexSet = typename GV::IndexSet;
         typedef typename IndexSet::IndexType size_type;
 
-        static const auto dim = EntitySet::dimension;
+        static const auto dim = GV::dimension;
 
       public:
 
         typedef GFS GridFunctionSpace;
         typedef X Vector;
         typedef Pred Predicate;
+        typedef GV GridView;
+        typedef ET EntityTransformation;
 
-        DGFTreeCommonData(const GFS& gfs, const X& x)
-          : _lfs(gfs)
+        DGFTreeCommonData(const GFS& gfs, const X& x, const GV& gv, const ET& entity_transformation)
+          : _entity_transformation(entity_transformation)
+          , _gv(gv)
+          , _lfs(gfs)
           , _lfs_cache(_lfs)
           , _x_view(x)
           , _x_local(_lfs.maxSize())
-          , _index_set(gfs.entitySet().indexSet())
+          , _index_set(_gv.indexSet())
           , _current_cell_index(std::numeric_limits<size_type>::max())
         {}
+
+        template<typename = std::enable_if_t<std::is_default_constructible_v<ET>,int>>
+        DGFTreeCommonData(const GFS& gfs, const X& x, const GV& gv)
+          : DGFTreeCommonData(gfs,x,gv,ET{})
+        {}
+
+        GridView gridView() {return _gv;}
 
       public:
 
         void bind(const Cell& cell)
         {
-          auto cell_index = _index_set.uniqueIndex(cell);
+          auto cell_index = _index_set.index(cell);
           if (_current_cell_index == cell_index)
             return;
 
-          _lfs.bind(cell);
+          // Cell& transformed_cell = _entity_transformation(cell);
+          _lfs.bind(_entity_transformation(cell));
           _lfs_cache.update();
           _x_view.bind(_lfs_cache);
           _x_view.read(_x_local);
@@ -126,6 +155,8 @@ namespace Dune {
           _current_cell_index = cell_index;
         }
 
+        ET _entity_transformation;
+        GV _gv;
         LFS _lfs;
         LFSCache _lfs_cache;
         XView _x_view;
@@ -137,10 +168,10 @@ namespace Dune {
 
 
 
-      template<typename LFS, typename Data>
+      template<typename LFS, typename Data, typename GV>
       class DGFTreeLeafFunction
         : public GridFunctionBase<GridFunctionTraits<
-                                         typename LFS::Traits::GridView,
+                                         GV,
                                          typename BasisInterfaceSwitch<
                                            typename FiniteElementInterfaceSwitch<
                                              typename LFS::Traits::FiniteElement
@@ -157,7 +188,7 @@ namespace Dune {
                                                  >::Basis
                                                >::Range
                                          >,
-                                       DGFTreeLeafFunction<LFS,Data>
+                                       DGFTreeLeafFunction<LFS,Data,GV>
                                        >
       {
 
@@ -169,12 +200,12 @@ namespace Dune {
 
         typedef GridFunctionBase<
           GridFunctionTraits<
-            typename LFS::Traits::GridView,
+            GV,
             typename BasisSwitch::RangeField,
             BasisSwitch::dimRange,
             typename BasisSwitch::Range
             >,
-          DGFTreeLeafFunction<LFS,Data>
+          DGFTreeLeafFunction<LFS,Data,GV>
           > BaseT;
 
       public:
@@ -208,7 +239,7 @@ namespace Dune {
         //! get a reference to the GridView
         const typename Traits::GridViewType& gridView() const
         {
-          return _lfs.gridFunctionSpace().gridView();
+          return _data->gridView();
         }
 
         const LFS& localFunctionSpace() const
@@ -226,7 +257,7 @@ namespace Dune {
 
 
 
-      template<typename LFS, typename Data>
+      template<typename LFS, typename Data, typename GV>
       class DGFTreeVectorFunction
         : public GridFunctionBase<GridFunctionTraits<
                                          typename LFS::Traits::GridView,
@@ -245,7 +276,7 @@ namespace Dune {
                                            TypeTree::StaticDegree<LFS>::value
                                            >
                                          >,
-                                       DGFTreeVectorFunction<LFS,Data>
+                                       DGFTreeVectorFunction<LFS,Data,GV>
                                        >
       {
 
@@ -268,7 +299,7 @@ namespace Dune {
               TypeTree::StaticDegree<LFS>::value
               >
             >,
-          DGFTreeVectorFunction<LFS,Data>
+          DGFTreeVectorFunction<LFS,Data,GV>
           > BaseT;
 
       public:
@@ -310,7 +341,7 @@ namespace Dune {
         //! get a reference to the GridView
         const typename Traits::GridViewType& gridView() const
         {
-          return _lfs.gridFunctionSpace().gridView();
+          return _data->gridView();
         }
 
         const LFS& localFunctionSpace() const
@@ -411,6 +442,7 @@ namespace Dune {
         , public TypeTree::DynamicTraversal
       {
 
+        using GV = typename Data::GridView;
 
         template<typename LFS, typename Child, typename TreePath>
         struct VisitChild
@@ -459,7 +491,7 @@ namespace Dune {
         template<typename LFS, typename TreePath>
         void add_vector_solution(const LFS& lfs, TreePath tp, VectorGridFunctionSpaceTag tag)
         {
-          add_to_vtk_writer(std::make_shared<DGFTreeVectorFunction<LFS,Data> >(lfs,data),tp);
+          add_to_vtk_writer(std::make_shared<DGFTreeVectorFunction<LFS,Data,GV> >(lfs,data),tp);
         }
 
         //! Tag dispatch-based switch that creates a vector-valued function for a VectorGridFunctionSpace.
@@ -472,49 +504,9 @@ namespace Dune {
           // do nothing here - not a vector space
         }
 
-        // **********************************************************************
-        // Visitor functions for adding DiscreteGridFunctions to VTKWriter
-        //
-        // The visitor functions contain a switch that will make them ignore
-        // function spaces with a different underlying GridView type than
-        // the VTKWriter.
-        // This cannot happen in vanilla PDELab, but is required for MultiDomain
-        // support
-        // **********************************************************************
-
-        // don't do anything if GridView types differ
-        template<typename LFS, typename TreePath>
-        typename std::enable_if<
-          !std::is_same<
-            typename LFS::Traits::GridFunctionSpace::Traits::GridView,
-            typename vtk_writer_traits<VTKWriter>::GridView
-            >::value
-          >::type
-        post(const LFS& lfs, TreePath tp)
-        {
-        }
-
-        // don't do anything if GridView types differ
-        template<typename LFS, typename TreePath>
-        typename std::enable_if<
-          !std::is_same<
-            typename LFS::Traits::GridFunctionSpace::Traits::GridView,
-            typename vtk_writer_traits<VTKWriter>::GridView
-            >::value
-          >::type
-        leaf(const LFS& lfs, TreePath tp)
-        {
-        }
-
         //! Handle VectorGridFunctionSpace components in here.
         template<typename LFS, typename TreePath>
-        typename std::enable_if<
-          std::is_same<
-            typename LFS::Traits::GridFunctionSpace::Traits::GridView,
-            typename vtk_writer_traits<VTKWriter>::GridView
-            >::value
-          >::type
-        post(const LFS& lfs, TreePath tp)
+        void post(const LFS& lfs, TreePath tp)
         {
           if (predicate(lfs, tp))
             add_vector_solution(lfs,tp,TypeTree::ImplementationTag<typename LFS::Traits::GridFunctionSpace>());
@@ -522,16 +514,10 @@ namespace Dune {
 
         //! Create a standard leaf function for leaf GridFunctionSpaces.
         template<typename LFS, typename TreePath>
-        typename std::enable_if<
-          std::is_same<
-            typename LFS::Traits::GridFunctionSpace::Traits::GridView,
-            typename vtk_writer_traits<VTKWriter>::GridView
-            >::value
-          >::type
-        leaf(const LFS& lfs, TreePath tp)
+        void leaf(const LFS& lfs, TreePath tp)
         {
           if (predicate(lfs, tp))
-            add_to_vtk_writer(std::make_shared<DGFTreeLeafFunction<LFS,Data> >(lfs,data),tp);
+            add_to_vtk_writer(std::make_shared<DGFTreeLeafFunction<LFS,Data,GV> >(lfs,data),tp);
         }
 
 
@@ -568,14 +554,21 @@ namespace Dune {
         typedef typename Data::GridFunctionSpace GFS;
         typedef typename Data::Vector Vector;
         typedef typename Data::Predicate Predicate;
+        typedef typename Data::GridView GridView;
+
+        template<typename LFS, typename NameGenerator>
+        OutputCollector& addSolution(const LFS& lfs, const NameGenerator& name_generator)
+        {
+
+          add_solution_to_vtk_writer_visitor<VTKWriter,Data,NameGenerator> visitor(_vtk_writer,_data,name_generator,_predicate);
+          TypeTree::applyToTree(lfs,visitor);
+          return *this;
+        }
 
         template<typename NameGenerator>
         OutputCollector& addSolution(const NameGenerator& name_generator)
         {
-
-          add_solution_to_vtk_writer_visitor<VTKWriter,Data,NameGenerator> visitor(_vtk_writer,_data,name_generator,_predicate);
-          TypeTree::applyToTree(_data->_lfs,visitor);
-          return *this;
+          return addSolution(_data->_lfs,name_generator);
         }
 
         template<typename Factory, typename TreePath>
@@ -649,22 +642,18 @@ namespace Dune {
              typename X,
              typename NameGenerator = vtk::DefaultFunctionNameGenerator,
              typename Predicate = vtk::DefaultPredicate>
-    vtk::OutputCollector<
-      VTKWriter,
-      vtk::DGFTreeCommonData<GFS,X,Predicate>
-      >
+    auto
     addSolutionToVTKWriter(VTKWriter& vtk_writer,
                            const GFS& gfs,
                            const X& x,
                            const NameGenerator& name_generator = vtk::defaultNameScheme(),
                            const Predicate& predicate = Predicate())
     {
-      typedef vtk::DGFTreeCommonData<GFS,X,Predicate> Data;
-      vtk::OutputCollector<VTKWriter,Data> collector(vtk_writer,std::make_shared<Data>(gfs,x),predicate);
+      typedef vtk::DGFTreeCommonData<GFS,X,Predicate,typename GFS::Traits::GridView> Data;
+      vtk::OutputCollector<VTKWriter,Data> collector(vtk_writer,std::make_shared<Data>(gfs,x,gfs.gridView()),predicate);
       collector.addSolution(name_generator);
       return collector;
     }
-
 
   } // namespace PDELab
 } // namespace Dune
