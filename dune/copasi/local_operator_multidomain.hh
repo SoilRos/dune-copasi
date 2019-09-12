@@ -221,7 +221,7 @@ public:
     }
   }
 
-  void setTime (double t)
+  void setTime(double t)
   {
     Dune::PDELab::InstationaryLocalOperatorDefaultMethods<double>::setTime(t);
     for (auto lp : _local_operator)

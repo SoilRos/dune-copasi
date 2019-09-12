@@ -12,9 +12,9 @@
 
 #include <muParser.h>
 
-#include <type_traits>
 #include <algorithm>
 #include <string>
+#include <type_traits>
 
 namespace Dune::Copasi {
 
@@ -116,10 +116,7 @@ public:
     return _parser;
   }
 
-  void set_time(double t)
-  {
-    _time = t;
-  }
+  void set_time(double t) { _time = t; }
 
 private:
   /// Output information on the parser error and throw DUNE exception

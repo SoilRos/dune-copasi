@@ -68,7 +68,8 @@ ModelMultiDomainDiffusionReaction<Grid, FEMorder, OrderingTag>::
 
         _logger.trace("creating grid function for variable: {}"_fmt, var);
         std::string eq = intial_config[var];
-        functions[count] = std::make_shared<GridFunction>(_grid_view, eq, false);
+        functions[count] =
+          std::make_shared<GridFunction>(_grid_view, eq, false);
         _mu_data_handler.set_functions(functions[count]->parser());
         functions[count]->compile_parser();
         functions[count]->set_time(current_time());
@@ -374,7 +375,10 @@ ModelMultiDomainDiffusionReaction<Grid, FEMorder, OrderingTag>::step()
   double max_error = std::numeric_limits<double>::max();
   auto states_after = _states;
 
-  _logger.info("Time Step {:.2e} + {:.2e} -> {:.2e}"_fmt, current_time(), dt, current_time()+dt);
+  _logger.info("Time Step {:.2e} + {:.2e} -> {:.2e}"_fmt,
+               current_time(),
+               dt,
+               current_time() + dt);
   std::size_t op_iter = 0;
   do {
     const auto states_before = states_after;

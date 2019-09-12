@@ -6,8 +6,8 @@
 #include <dune/pdelab/common/quadraturerules.hh>
 #include <dune/pdelab/localoperator/flags.hh>
 #include <dune/pdelab/localoperator/idefault.hh>
-#include <dune/pdelab/localoperator/pattern.hh>
 #include <dune/pdelab/localoperator/numericaljacobian.hh>
+#include <dune/pdelab/localoperator/pattern.hh>
 
 #include <dune/geometry/referenceelements.hh>
 #include <dune/geometry/type.hh>
@@ -227,15 +227,18 @@ public:
               pattern.addLink(lfsv.child(i), k, lfsu.child(j), l);
   }
 
-  void setTime (double t)
+  void setTime(double t)
   {
     Dune::PDELab::InstationaryLocalOperatorDefaultMethods<double>::setTime(t);
     for (auto& gf : _jacobian_gf)
-      if (gf) gf->set_time(t);
+      if (gf)
+        gf->set_time(t);
     for (auto& gf : _reaction_gf)
-      if (gf) gf->set_time(t);
+      if (gf)
+        gf->set_time(t);
     for (auto& gf : _diffusion_gf)
-      if (gf) gf->set_time(t);
+      if (gf)
+        gf->set_time(t);
   }
 
   template<typename EG, typename LFSU, typename X, typename LFSV, typename R>
@@ -446,7 +449,8 @@ class TemporalLocalOperatorDiffusionReaction
   : public Dune::PDELab::LocalOperatorDefaultFlags
   , public Dune::PDELab::FullVolumePattern
   , public Dune::PDELab::InstationaryLocalOperatorDefaultMethods<double>
-  , public Dune::PDELab::NumericalJacobianVolume<TemporalLocalOperatorDiffusionReaction<GV,LFE>>
+  , public Dune::PDELab::NumericalJacobianVolume<
+      TemporalLocalOperatorDiffusionReaction<GV, LFE>>
 {
   //! grid view
   using GridView = GV;
@@ -587,8 +591,8 @@ public:
     }
   }
 
-  // template<typename EG, typename LFSU, typename X, typename LFSV, typename Mat>
-  // void jacobian_volume(const EG& eg,
+  // template<typename EG, typename LFSU, typename X, typename LFSV, typename
+  // Mat> void jacobian_volume(const EG& eg,
   //                      const LFSU& lfsu,
   //                      const X& x,
   //                      const LFSV& lfsv,
@@ -600,7 +604,8 @@ public:
   //                         const std::size_t& dof_j,
   //                         const auto& value) {
   //     mat.accumulate(
-  //       lfsv.child(component_i), dof_i, lfsu.child(component_j), dof_j, value);
+  //       lfsv.child(component_i), dof_i, lfsu.child(component_j), dof_j,
+  //       value);
   //   };
 
   //   // get geometry
