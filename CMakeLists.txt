@@ -22,10 +22,6 @@ dune_project()
 
 dune_enable_all_packages()
 
-<<<<<<< HEAD
-=======
-add_subdirectory(python)
->>>>>>> parent of db8aa11... Remove support for tiff
 add_subdirectory(src)
 add_subdirectory(dune)
 add_subdirectory(doc)
