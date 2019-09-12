@@ -11,6 +11,7 @@
 #include <dune/pdelab/gridfunctionspace/gridfunctionadapter.hh>
 
 #include <dune/copasi/model_multidomain_diffusion_reaction.hh>
+#include <dune/copasi/muparser_data_handler.hh>
 
 namespace Dune::Copasi {
 
@@ -38,6 +39,12 @@ ModelMultiDomainDiffusionReaction<Grid, FEMorder, OrderingTag>::
   std::vector<std::shared_ptr<CompartementGridFunction>> comp_functions(
     _domains);
 
+  std::vector<std::shared_ptr<TIFFGrayscale<std::size_t>>> data(0);
+  std::vector<std::string> data_id(0);
+  MuParserDataHandler<TIFFGrayscale<unsigned short>> _mu_data_handler;
+  if (_config.hasSub("data"))
+    _mu_data_handler.add_tiff_functions(_config.sub("data"));
+
   for (auto& [op, state] : _states) {
     _logger.trace("interpolation of operator {}"_fmt, op);
     for (std::size_t i = 0; i < _domains; ++i) {
@@ -61,7 +68,10 @@ ModelMultiDomainDiffusionReaction<Grid, FEMorder, OrderingTag>::
 
         _logger.trace("creating grid function for variable: {}"_fmt, var);
         std::string eq = intial_config[var];
-        functions[count] = std::make_shared<GridFunction>(_grid_view, eq);
+        functions[count] = std::make_shared<GridFunction>(_grid_view, eq, false);
+        _mu_data_handler.set_functions(functions[count]->parser());
+        functions[count]->compile_parser();
+        functions[count]->set_time(current_time());
         count++;
       }
       // the second is because of the "ghost" child for empty compartments
