@@ -2,6 +2,7 @@ enable_testing()
 
 dune_symlink_to_source_files(FILES "grids" DESTINATION "." )
 dune_symlink_to_source_files(FILES "reference" DESTINATION "." )
+dune_symlink_to_source_files(FILES "data" DESTINATION "." )
 
 dune_add_test(NAME            test_dynamic_local_finite_element
               SOURCES         test_dynamic_local_finite_element.cc
@@ -17,6 +18,11 @@ dune_add_test(NAME            test_concepts_grid
 
 dune_add_test(NAME            test_concepts_typetree
               SOURCES         test_concepts_typetree.cc
+              LABELS          unit)
+
+dune_add_test(NAME            test_tiff_grayscale
+              SOURCES         test_tiff_grayscale.cc
+              LINK_LIBRARIES  TIFF::TIFF
               LABELS          unit)
 
 if (dune-testtools_FOUND)
