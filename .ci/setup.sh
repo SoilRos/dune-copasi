@@ -71,18 +71,9 @@ echo '' >> cmake-patch.txt
 git apply cmake-patch.txt
 cd ../
 
-# patch cmake to remove FMT_SHARED flag
-cd dune-logging
-git apply ../../logging.patch
-cd ../
+./dune-common/bin/dunecontrol --opts=${DUNE_OPTIONS_FILE} all
 
-# download dune-copasi
-# git clone -b master --depth 1 --recursive https://gitlab.dune-project.org/copasi/dune-copasi.git
-
-./dune-common/bin/dunecontrol --module=dune-copasi printdeps
-./dune-common/bin/dunecontrol --opts=opts.txt --module=dune-copasi all
-
-if [[ $MSYSTEM ]]; then
-	cat dune-copasi/build-cmake/src/CMakeFiles/dune_copasi.dir/linklibs.rsp
-	ldd dune-copasi/build-cmake/src/dune_copasi.exe
-fi
+# if [[ $MSYSTEM ]]; then
+# 	cat dune-copasi/build-cmake/src/CMakeFiles/dune_copasi.dir/linklibs.rsp
+# 	ldd dune-copasi/build-cmake/src/dune_copasi.exe
+# fi

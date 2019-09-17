@@ -35,10 +35,10 @@ before_script:
   - tar xzvf libsbml-static-$TRAVIS_OS_NAME.tgz
 
 script:
-  - echo $(pwd)
-  - ls
   - cd ..
-  # build dune-copasi
+  - echo 'CMAKE_FLAGS+=" -DDUNE_PYTHON_VIRTUALENV_SETUP=1 -DDUNE_PYTHON_VIRTUALENV_PATH=${PWD}/dune-python-venv"' >> dune.opts
+  - set DUNE_OPTIONS_FILE=dune.opts
+  # build dune-copasi  
   - bash dune-copasi/.ci/setup.sh
 
 notifications:
