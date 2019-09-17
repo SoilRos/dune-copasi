@@ -6,7 +6,7 @@ install:
   # download muparser & gmp as static libraries
   - appveyor DownloadFile "https://github.com/lkeegan/libsbml-static/releases/latest/download/libsbml-static-windows.zip"
   - 7z x libsbml-static-windows.zip
-  # - mv dune-copasi C:\msys64\home\appveyor\.
+  - cp -r dune-copasi C:\msys64\home\appveyor\.
 
 build_script:
   # - echo 'CMAKE_FLAGS+=" -DDUNE_PYTHON_VIRTUALENV_SETUP=1 -DDUNE_PYTHON_VIRTUALENV_PATH=%WORKING_DIR%/dune-python-venv "' > dune.txt
