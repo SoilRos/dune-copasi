@@ -12,7 +12,7 @@ install:
 
 build_script:
   - echo 'CMAKE_FLAGS+=" -DDUNE_PYTHON_VIRTUALENV_SETUP=1 -DDUNE_PYTHON_VIRTUALENV_PATH=$(pwd)/dune-python-venv"' >> dune.opts
-  - set DUNE_OPTIONS_FILE="$(pwd)/dune.opts"
+  - DUNE_OPTIONS_FILE="$(pwd)/dune.opts"
   - echo "${DUNE_OPTIONS_FILE}"
   - cat ${DUNE_OPTIONS_FILE}
   - cp dune-copasi\.ci\setup.sh C:\msys64\home\appveyor\.
