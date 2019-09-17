@@ -6,8 +6,9 @@ DUNE_VERSION="master"
 PATH=/mingw64/bin:$PATH
 echo "PATH=$PATH"
 echo "MSYSTEM: $MSYSTEM"
-echo "DUNE_OPTIONS_FILE: $DUNE_OPTIONS_FILE"
 echo "DUNECONTROL: ${DUNECONTROL}"
+echo "DUNE_OPTIONS_FILE: ${DUNE_OPTIONS_FILE}"
+cat ${DUNE_OPTIONS_FILE}
 
 which g++
 which python
