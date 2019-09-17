@@ -12,7 +12,7 @@ install:
 
 build_script:
   # - echo 'CMAKE_FLAGS+=" -DDUNE_PYTHON_VIRTUALENV_SETUP=1 -DDUNE_PYTHON_VIRTUALENV_PATH='"%WORKING_DIR%"'/dune-python-venv "' > dune.txt
-  - echo 'CMAKE_FLAGS="-G '"'"'Unix Makefiles'"'"' -DGMPXX_INCLUDE_DIR:PATH='"%WORKING_DIR%"'/gmp/include -DGMPXX_LIB:FILEPATH='"%WORKING_DIR%"'/gmp/lib/libgmpxx.a -DGMP_LIB:FILEPATH='"%WORKING_DIR%"'/gmp/lib/libgmp.a -DCMAKE_DISABLE_FIND_PACKAGE_QuadMath=TRUE -DBUILD_TESTING=OFF -DDUNE_USE_ONLY_STATIC_LIBS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH='"%WORKING_DIR%"'/muparser -DF77=true -DCMAKE_CXX_FLAGS='"'"'-Wa,-mbig-obj -static -static-libgcc -static-libstdc++'"'"' "' > C:\msys64\home\appveyor\dune.txt
+  - echo CMAKE_FLAGS="-G '"'"'Unix Makefiles'"'"' -DGMPXX_INCLUDE_DIR:PATH='"%WORKING_DIR%"'/gmp/include -DGMPXX_LIB:FILEPATH='"%WORKING_DIR%"'/gmp/lib/libgmpxx.a -DGMP_LIB:FILEPATH='"%WORKING_DIR%"'/gmp/lib/libgmp.a -DCMAKE_DISABLE_FIND_PACKAGE_QuadMath=TRUE -DBUILD_TESTING=OFF -DDUNE_USE_ONLY_STATIC_LIBS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH='"%WORKING_DIR%"'/muparser -DF77=true -DCMAKE_CXX_FLAGS='"'"'-Wa,-mbig-obj -static -static-libgcc -static-libstdc++'"'"' " > C:\msys64\home\appveyor\dune.txt
   - type C:\msys64\home\appveyor\dune.txt
   - set DUNE_OPTIONS_FILE="dune.txt"
   - set DUNECONTROL=./dune-common/bin/dunecontrol
