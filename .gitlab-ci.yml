@@ -103,6 +103,7 @@ stages:
 .system_tests: &system_tests
   stage: system_tests
   script: 
+    - cd ..
     - bash dune-copasi/.ci/system_tests.sh
   artifacts:
     paths:
