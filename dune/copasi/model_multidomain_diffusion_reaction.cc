@@ -245,7 +245,11 @@ ModelMultiDomainDiffusionReaction<Grid, FEMorder, OrderingTag>::
     auto& lop = _local_operators[op];
     auto& tlop = _temporal_local_operators[op];
 
-    MBE mbe((int)pow(3, dim));
+    std::size_t max_comps(0);
+    for (std::size_t i = 0; i < gfs->degree(); i++)
+      max_comps = std::max(max_comps,gfs->child(i).degree());
+    
+    MBE mbe((int)pow(3, dim)*max_comps);
 
     _logger.trace("create spatial grid operator {}"_fmt, op);
     _spatial_grid_operators[op] = std::make_shared<GOS>(
