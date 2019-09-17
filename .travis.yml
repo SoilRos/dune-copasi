@@ -21,15 +21,31 @@ matrix:
     #     # check dependencies of executable
     #     - ldd $TRAVIS_BUILD_DIR/build-cmake/src/dune_copasi
     # mac build
-    - os: osx
-      osx_image: xcode10.3
-      compiler: clang
-      install:
-        # DUNE will only compile for 10.14 - uses some C++17 not available in earlier osx versions...
-        - export MACOSX_DEPLOYMENT_TARGET=10.14
-      after_script:
-        # check dependencies of executable
-        - otool -L $TRAVIS_BUILD_DIR/build-cmake/src/dune_copasi
+    # - os: osx
+    #   osx_image: xcode10.3
+    #   compiler: clang
+    #   install:
+    #     # DUNE will only compile for 10.14 - uses some C++17 not available in earlier osx versions...
+    #     - export MACOSX_DEPLOYMENT_TARGET=10.14
+    #   after_script:
+    #     # check dependencies of executable
+    #     - otool -L $TRAVIS_BUILD_DIR/build-cmake/src/dune_copasi
+
+os:
+  - linux
+  - osx
+
+compiler:
+  - gcc
+  - clang
+
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - g++-9
+
 
 stages:
   - setup
@@ -44,6 +60,11 @@ cache:
 jobs:
   include:
     - stage: setup
+      before_install:
+        - if [ "$TRAVIS_OS_NAME" = "linux" ]; sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 100
+        - if [ "$TRAVIS_OS_NAME" = "linux" ]; sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 100
+        - gcc --version
+        - g++ --version
       install:
         - cd ..
         # download muparser as static library
@@ -58,13 +79,23 @@ jobs:
         # setup dependencies
         - bash dune-copasi/.ci/setup.sh
     - stage: build
-      script: cd .. && ./dune-copasi/.ci/build.sh
+      script: 
+        - cd ..
+        - bash dune-copasi/.ci/build.sh
     - stage: unit_tests
       name: "Unit Tests"
-      script: cd .. && ./dune-copasi/.ci/unit_tests.sh
+      script: 
+        - cd ..
+        - bash dune-copasi/.ci/unit_tests.sh
     - stage: system_tests
       name: "System Tests"
-      script: cd .. && ./dune-copasi/.ci/system_tests.sh
+      script: 
+        - cd ..
+        - bash dune-copasi/.ci/system_tests.sh
+      after_script:
+        # check dependencies of executable
+        - if [ "$TRAVIS_OS_NAME" = "osx" ]; otool -L $TRAVIS_BUILD_DIR/build-cmake/src/dune_copasi
+        - if [ "$TRAVIS_OS_NAME" = "linux" ]; ldd $TRAVIS_BUILD_DIR/build-cmake/src/dune_copasi
 
 notifications:
 email: false
