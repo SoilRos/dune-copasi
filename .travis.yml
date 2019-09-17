@@ -19,7 +19,7 @@ matrix:
         - g++ --version
       after_script:
         # check dependencies of executable
-        - ldd build/dune-copasi/build-cmake/src/dune_copasi
+        - ldd $TRAVIS_BUILD_DIR/dune-copasi/build-cmake/src/dune_copasi
     # mac build
     - os: osx
       osx_image: xcode10.3
@@ -29,25 +29,40 @@ matrix:
         - export MACOSX_DEPLOYMENT_TARGET=10.14
       after_script:
         # check dependencies of executable
-        - otool -L build/dune-copasi/build-cmake/src/dune_copasi
+        - otool -L $TRAVIS_BUILD_DIR/dune-copasi/build-cmake/src/dune_copasi
 
-before_script:
-  - cd ..
-  # download muparser as static library
-  - wget "https://github.com/lkeegan/libsbml-static/releases/latest/download/libsbml-static-$TRAVIS_OS_NAME.tgz"
-  - tar xzvf libsbml-static-$TRAVIS_OS_NAME.tgz
-  - WORKING_DIR=$(pwd)
-  # - echo 'CMAKE_FLAGS+=" -DDUNE_PYTHON_VIRTUALENV_SETUP=1 -DDUNE_PYTHON_VIRTUALENV_PATH=$WORKING_DIR/dune-python-venv"' >> dune.opts
-  - echo 'CMAKE_FLAGS+=" -G '"'"'Unix Makefiles'"'"' -DGMPXX_INCLUDE_DIR:PATH='"$WORKING_DIR"'/gmp/include -DGMPXX_LIB:FILEPATH='"$WORKING_DIR"'/gmp/lib/libgmpxx.a -DGMP_LIB:FILEPATH='"$WORKING_DIR"'/gmp/lib/libgmp.a -DCMAKE_DISABLE_FIND_PACKAGE_QuadMath=TRUE -DBUILD_TESTING=OFF -DDUNE_USE_ONLY_STATIC_LIBS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH='"$WORKING_DIR"'/muparser -DF77=true "' > dune.opts
-  - export DUNE_OPTIONS_FILE="dune.opts"
-  - export DUNECONTROL=./dune-common/bin/dunecontrol
-  - echo "${DUNE_OPTIONS_FILE}"
-  # build dune-copasi  
-  - bash dune-copasi/.ci/setup.sh
+stages:
+  - setup
+  - build
+  - system_tests
+  - unit_tests
 
-script:
-  - echo "dune-copasi is not built yet"
-  - echo $WORKING_DIR
+cache:
+  directories:
+  - $TRAVIS_BUILD_DIR/../
+
+jobs:
+  include:
+    - stage: setup
+      install:
+        - cd ..
+        # download muparser as static library
+        - wget "https://github.com/lkeegan/libsbml-static/releases/latest/download/libsbml-static-$TRAVIS_OS_NAME.tgz"
+        - tar xzvf libsbml-static-$TRAVIS_OS_NAME.tgz
+      script:
+        # - echo 'CMAKE_FLAGS+=" -DDUNE_PYTHON_VIRTUALENV_SETUP=1 -DDUNE_PYTHON_VIRTUALENV_PATH=$WORKING_DIR/dune-python-venv"' >> dune.opts
+        - echo 'CMAKE_FLAGS+=" -G '"'"'Unix Makefiles'"'"' -DGMPXX_INCLUDE_DIR:PATH='"$WORKING_DIR"'/gmp/include -DGMPXX_LIB:FILEPATH='"$WORKING_DIR"'/gmp/lib/libgmpxx.a -DGMP_LIB:FILEPATH='"$WORKING_DIR"'/gmp/lib/libgmp.a -DCMAKE_DISABLE_FIND_PACKAGE_QuadMath=TRUE -DBUILD_TESTING=OFF -DDUNE_USE_ONLY_STATIC_LIBS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH='"$WORKING_DIR"'/muparser -DF77=true "' > dune.opts
+        - export DUNE_OPTIONS_FILE="dune.opts"
+        - export DUNECONTROL=./dune-common/bin/dunecontrol
+        - echo "${DUNE_OPTIONS_FILE}"
+        # setup dependencies
+        - bash dune-copasi/.ci/setup.sh
+    - stage: build
+      script: bash dune-copasi/.ci/build.sh
+    - stage: unit_tests
+      script: bash dune-copasi/.ci/unit_tests.sh
+    - stage: system_tests
+      script: bash dune-copasi/.ci/system_tests.sh
 
 notifications:
 email: false
