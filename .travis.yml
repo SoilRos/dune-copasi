@@ -1,0 +1,43 @@
+language: cpp
+matrix:
+  include:
+    - os: linux
+      dist: xenial
+      compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-9
+      before_install:
+        - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 100
+        - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 100
+        - gcc --version
+        - g++ --version
+      after_script:
+        # check dependencies of executable
+        - ldd build/dune-copasi/build-cmake/src/dune_copasi
+    # mac build
+    - os: osx
+      osx_image: xcode10.3
+      compiler: clang
+      install:
+        # DUNE will only compile for 10.14 - uses some C++17 not available in earlier osx versions...
+        - export MACOSX_DEPLOYMENT_TARGET=10.14
+      after_script:
+        # check dependencies of executable
+        - otool -L build/dune-copasi/build-cmake/src/dune_copasi
+
+before_script:
+  # download muparser as static library
+  - wget "https://github.com/lkeegan/libsbml-static/releases/latest/download/libsbml-static-$TRAVIS_OS_NAME.tgz"
+  - tar xzvf libsbml-static-$TRAVIS_OS_NAME.tgz
+
+script:
+  - cd ..
+  # build dune-copasi
+  - bash dune-copasi/.ci/build.sh
+
+notifications:
+email: false
