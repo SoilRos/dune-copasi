@@ -14,18 +14,6 @@ g++ --version
 gcc --version
 cmake --version
 
-WORKING_DIR=$(pwd)
-
-mkdir build
-cd build
-echo 'CMAKE_FLAGS=" -G '"'"'Unix Makefiles'"'"' -DGMPXX_INCLUDE_DIR:PATH='"$WORKING_DIR"'/gmp/include -DGMPXX_LIB:FILEPATH='"$WORKING_DIR"'/gmp/lib/libgmpxx.a -DGMP_LIB:FILEPATH='"$WORKING_DIR"'/gmp/lib/libgmp.a -DCMAKE_DISABLE_FIND_PACKAGE_QuadMath=TRUE -DBUILD_TESTING=OFF -DDUNE_USE_ONLY_STATIC_LIBS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH='"$WORKING_DIR"'/muparser -DF77=true "' > opts.txt
-# on windows add flags to support large object files
-# https://stackoverflow.com/questions/16596876/object-file-has-too-many-sections
-if [[ $MSYSTEM ]]; then
-	echo 'CMAKE_FLAGS=" -G '"'"'Unix Makefiles'"'"' -DGMPXX_INCLUDE_DIR:PATH='"$WORKING_DIR"'/gmp/include -DGMPXX_LIB:FILEPATH='"$WORKING_DIR"'/gmp/lib/libgmpxx.a -DGMP_LIB:FILEPATH='"$WORKING_DIR"'/gmp/lib/libgmp.a -DCMAKE_DISABLE_FIND_PACKAGE_QuadMath=TRUE -DBUILD_TESTING=OFF -DDUNE_USE_ONLY_STATIC_LIBS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH='"$WORKING_DIR"'/muparser -DF77=true -DCMAKE_CXX_FLAGS='"'"'-Wa,-mbig-obj -static -static-libgcc -static-libstdc++'"'"' "' > opts.txt
-fi
-echo 'MAKE_FLAGS="-j2 VERBOSE=1"' >> opts.txt
-
 # download Dune dependencies
 for repo in dune-common dune-typetree dune-pdelab dune-multidomaingrid
 do
