@@ -1,25 +1,25 @@
 language: cpp
 matrix:
   include:
-    - os: linux
-      dist: xenial
-      compiler: gcc
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-9
-            # - python3-pip
-      before_install:
-        # - sudo pip3 install virtualenv 
-        - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 100
-        - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 100
-        - gcc --version
-        - g++ --version
-      after_script:
-        # check dependencies of executable
-        - ldd $TRAVIS_BUILD_DIR/dune-copasi/build-cmake/src/dune_copasi
+    # - os: linux
+    #   dist: xenial
+    #   compiler: gcc
+    #   addons:
+    #     apt:
+    #       sources:
+    #         - ubuntu-toolchain-r-test
+    #       packages:
+    #         - g++-9
+    #         # - python3-pip
+    #   before_install:
+    #     # - sudo pip3 install virtualenv 
+    #     - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 100
+    #     - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 100
+    #     - gcc --version
+    #     - g++ --version
+    #   after_script:
+    #     # check dependencies of executable
+    #     - ldd $TRAVIS_BUILD_DIR/build-cmake/src/dune_copasi
     # mac build
     - os: osx
       osx_image: xcode10.3
@@ -29,7 +29,7 @@ matrix:
         - export MACOSX_DEPLOYMENT_TARGET=10.14
       after_script:
         # check dependencies of executable
-        - otool -L $TRAVIS_BUILD_DIR/dune-copasi/build-cmake/src/dune_copasi
+        - otool -L $TRAVIS_BUILD_DIR/build-cmake/src/dune_copasi
 
 stages:
   - setup
@@ -58,11 +58,13 @@ jobs:
         # setup dependencies
         - bash dune-copasi/.ci/setup.sh
     - stage: build
-      script: bash dune-copasi/.ci/build.sh
+      script: cd .. && ./dune-copasi/.ci/build.sh
     - stage: unit_tests
-      script: bash dune-copasi/.ci/unit_tests.sh
+      name: "Unit Tests"
+      script: cd .. && ./dune-copasi/.ci/unit_tests.sh
     - stage: system_tests
-      script: bash dune-copasi/.ci/system_tests.sh
+      name: "System Tests"
+      script: cd .. && ./dune-copasi/.ci/system_tests.sh
 
 notifications:
 email: false
