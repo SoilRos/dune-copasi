@@ -6,6 +6,7 @@ DUNE_VERSION="master"
 PATH=/mingw64/bin:$PATH
 echo "PATH=$PATH"
 echo "MSYSTEM: $MSYSTEM"
+echo "DUNE_OPTIONS_FILE: $DUNE_OPTIONS_FILE"
 
 which g++
 which python
@@ -59,9 +60,7 @@ echo '' >> cmake-patch.txt
 git apply cmake-patch.txt
 cd ../
 
-./dune-common/bin/dunecontrol --opts=${DUNE_OPTIONS_FILE} all
-
-# if [[ $MSYSTEM ]]; then
-# 	cat dune-copasi/build-cmake/src/CMakeFiles/dune_copasi.dir/linklibs.rsp
-# 	ldd dune-copasi/build-cmake/src/dune_copasi.exe
-# fi
+for repo in dune-logging dune-pdelab dune-multidomaingrid
+do
+  ./dune-common/bin/dunecontrol --opts=${DUNE_OPTIONS_FILE} --module=$repo all
+done

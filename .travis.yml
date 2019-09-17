@@ -30,12 +30,10 @@ matrix:
         - otool -L build/dune-copasi/build-cmake/src/dune_copasi
 
 before_script:
+  - cd ..
   # download muparser as static library
   - wget "https://github.com/lkeegan/libsbml-static/releases/latest/download/libsbml-static-$TRAVIS_OS_NAME.tgz"
   - tar xzvf libsbml-static-$TRAVIS_OS_NAME.tgz
-
-script:
-  - cd ..
   - WORKING_DIR=$(pwd)
   - echo 'CMAKE_FLAGS+=" -DDUNE_PYTHON_VIRTUALENV_SETUP=1 -DDUNE_PYTHON_VIRTUALENV_PATH=$WORKING_DIR/dune-python-venv"' >> dune.opts
   - echo 'CMAKE_FLAGS+=" -G '"'"'Unix Makefiles'"'"' -DGMPXX_INCLUDE_DIR:PATH='"$WORKING_DIR"'/gmp/include -DGMPXX_LIB:FILEPATH='"$WORKING_DIR"'/gmp/lib/libgmpxx.a -DGMP_LIB:FILEPATH='"$WORKING_DIR"'/gmp/lib/libgmp.a -DCMAKE_DISABLE_FIND_PACKAGE_QuadMath=TRUE -DBUILD_TESTING=OFF -DDUNE_USE_ONLY_STATIC_LIBS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH='"$WORKING_DIR"'/muparser -DF77=true "' > dune.opts
@@ -43,6 +41,10 @@ script:
   - echo "${DUNE_OPTIONS_FILE}"
   # build dune-copasi  
   - bash dune-copasi/.ci/setup.sh
+
+script:
+  - echo "dune-copasi is not built yet"
+  - echo $WORKING_DIR
 
 notifications:
 email: false
