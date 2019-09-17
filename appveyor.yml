@@ -12,6 +12,5 @@ install:
 
 build_script:
   - ls
-  - cp .ci\setup.sh C:\msys64\home\appveyor\.
-  - cd ..
+  - cp dune-copasi\.ci\setup.sh C:\msys64\home\appveyor\.
   - bash -l setup.sh
