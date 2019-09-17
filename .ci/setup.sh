@@ -7,6 +7,7 @@ PATH=/mingw64/bin:$PATH
 echo "PATH=$PATH"
 echo "MSYSTEM: $MSYSTEM"
 echo "DUNE_OPTIONS_FILE: $DUNE_OPTIONS_FILE"
+echo "DUNECONTROL: ${DUNECONTROL}"
 
 which g++
 which python
@@ -64,5 +65,5 @@ ls
 
 for repo in dune-logging dune-pdelab dune-multidomaingrid
 do
-  ./dune-common/bin/dunecontrol --opts=${DUNE_OPTIONS_FILE} --module=$repo all
+  ${DUNECONTROL} --opts=${DUNE_OPTIONS_FILE} --module=$repo all
 done
