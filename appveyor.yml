@@ -6,6 +6,7 @@ install:
   # download muparser & gmp as static libraries
   - appveyor DownloadFile "https://github.com/lkeegan/libsbml-static/releases/latest/download/libsbml-static-windows.zip"
   - 7z x libsbml-static-windows.zip
+  - ls
   - cp -r dune-copasi C:\msys64\home\appveyor\.
 
 build_script:
