@@ -60,6 +60,8 @@ echo '' >> cmake-patch.txt
 git apply cmake-patch.txt
 cd ../
 
+ls
+
 for repo in dune-logging dune-pdelab dune-multidomaingrid
 do
   ./dune-common/bin/dunecontrol --opts=${DUNE_OPTIONS_FILE} --module=$repo all

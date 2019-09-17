@@ -10,7 +10,9 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - g++-9
+            # - python3-pip
       before_install:
+        # - sudo pip3 install virtualenv 
         - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 100
         - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 100
         - gcc --version
@@ -35,7 +37,8 @@ before_script:
   - wget "https://github.com/lkeegan/libsbml-static/releases/latest/download/libsbml-static-$TRAVIS_OS_NAME.tgz"
   - tar xzvf libsbml-static-$TRAVIS_OS_NAME.tgz
   - WORKING_DIR=$(pwd)
-  - echo 'CMAKE_FLAGS+=" -DDUNE_PYTHON_VIRTUALENV_SETUP=1 -DDUNE_PYTHON_VIRTUALENV_PATH=$WORKING_DIR/dune-python-venv -G '"'"'Unix Makefiles'"'"' -DGMPXX_INCLUDE_DIR:PATH='"$WORKING_DIR"'/gmp/include -DGMPXX_LIB:FILEPATH='"$WORKING_DIR"'/gmp/lib/libgmpxx.a -DGMP_LIB:FILEPATH='"$WORKING_DIR"'/gmp/lib/libgmp.a -DCMAKE_DISABLE_FIND_PACKAGE_QuadMath=TRUE -DBUILD_TESTING=OFF -DDUNE_USE_ONLY_STATIC_LIBS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH='"$WORKING_DIR"'/muparser -DF77=true "' > dune.opts
+  # - echo 'CMAKE_FLAGS+=" -DDUNE_PYTHON_VIRTUALENV_SETUP=1 -DDUNE_PYTHON_VIRTUALENV_PATH=$WORKING_DIR/dune-python-venv"' >> dune.opts
+  - echo 'CMAKE_FLAGS+=" -G '"'"'Unix Makefiles'"'"' -DGMPXX_INCLUDE_DIR:PATH='"$WORKING_DIR"'/gmp/include -DGMPXX_LIB:FILEPATH='"$WORKING_DIR"'/gmp/lib/libgmpxx.a -DGMP_LIB:FILEPATH='"$WORKING_DIR"'/gmp/lib/libgmp.a -DCMAKE_DISABLE_FIND_PACKAGE_QuadMath=TRUE -DBUILD_TESTING=OFF -DDUNE_USE_ONLY_STATIC_LIBS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH='"$WORKING_DIR"'/muparser -DF77=true "' > dune.opts
   - export DUNE_OPTIONS_FILE="dune.opts"
   - echo "${DUNE_OPTIONS_FILE}"
   # build dune-copasi  
