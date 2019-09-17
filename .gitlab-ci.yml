@@ -83,7 +83,7 @@ stages:
   stage: build
   script:
     - cd ..
-    - ./.ci/build.sh
+    - bash dune-copasi/.ci/build.sh
   artifacts:
     paths:
       - build-cmake
@@ -94,7 +94,7 @@ stages:
   script: 
     - echo 'CMAKE_FLAGS+=" -DCMAKE_BUILD_TYPE=Debug"' >> /duneci/cmake-flags/dune_copasi.opts
     - cd .. 
-    - ./.ci/unit_tests.sh
+    - bash dune-copasi/.ci/unit_tests.sh
   artifacts:
     paths:
       - build-cmake/test
@@ -103,7 +103,7 @@ stages:
 .system_tests: &system_tests
   stage: system_tests
   script: 
-    - ./.ci/system_tests.sh
+    - bash dune-copasi/.ci/system_tests.sh
   artifacts:
     paths:
       - cd ..
