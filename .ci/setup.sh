@@ -66,5 +66,5 @@ ls
 
 for repo in dune-logging dune-pdelab dune-multidomaingrid
 do
-  ${DUNECONTROL} --opts=dune.txt --module=$repo all
+  ${DUNECONTROL} --opts=${DUNE_OPTIONS_FILE} --module=$repo all
 done
