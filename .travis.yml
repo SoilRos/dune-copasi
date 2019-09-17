@@ -61,8 +61,8 @@ jobs:
   include:
     - stage: setup
       before_install:
-        - if [ "$TRAVIS_OS_NAME" = "linux" ]; sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 100; fi
-        - if [ "$TRAVIS_OS_NAME" = "linux" ]; sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 100; fi
+        - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 100; fi
+        - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 100; fi
         - gcc --version
         - g++ --version
       install:
@@ -94,8 +94,8 @@ jobs:
         - bash dune-copasi/.ci/system_tests.sh
       after_script:
         # check dependencies of executable
-        - if [ "$TRAVIS_OS_NAME" = "osx" ]; otool -L $TRAVIS_BUILD_DIR/build-cmake/src/dune_copasi; fi
-        - if [ "$TRAVIS_OS_NAME" = "linux" ]; ldd $TRAVIS_BUILD_DIR/build-cmake/src/dune_copasi; fi
+        - if [ "$TRAVIS_OS_NAME" = "osx" ]; then otool -L $TRAVIS_BUILD_DIR/build-cmake/src/dune_copasi; fi
+        - if [ "$TRAVIS_OS_NAME" = "linux" ]; then ldd $TRAVIS_BUILD_DIR/build-cmake/src/dune_copasi; fi
 
 notifications:
 email: false
