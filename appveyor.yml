@@ -11,6 +11,8 @@ install:
   - mv gmp C:\msys64\home\appveyor\.
 
 build_script:
+  - echo $(pwd)
+  - ls
   - cd ..
-  - cp dune-copasi\.ci\build.sh C:\msys64\home\appveyor\.
-  - bash -l build.sh
+  - cp dune-copasi\.ci\setup.sh C:\msys64\home\appveyor\.
+  - bash -l setup.sh

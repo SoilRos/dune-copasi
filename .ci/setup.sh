@@ -1,4 +1,4 @@
-# build script for Travis and AppVeyor CI
+# dependencies setup script for Travis and AppVeyor CI
 
 DUNE_VERSION="master"
 

@@ -35,9 +35,11 @@ before_script:
   - tar xzvf libsbml-static-$TRAVIS_OS_NAME.tgz
 
 script:
+  - echo $(pwd)
+  - ls
   - cd ..
   # build dune-copasi
-  - bash dune-copasi/.ci/build.sh
+  - bash dune-copasi/.ci/setup.sh
 
 notifications:
 email: false
