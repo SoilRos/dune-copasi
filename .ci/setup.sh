@@ -11,19 +11,26 @@ echo "DUNE_OPTIONS_FILE: ${DUNE_OPTIONS_FILE}"
 cat ${DUNE_OPTIONS_FILE}
 
 which g++
-which python
-which python3
-which pip
-which cmake
-if [ "$TRAVIS_OS_NAME" = "linux" ]; then dpkg -L python; fi
-
 g++ --version
+
+which gcc
 gcc --version
-cmake --version
+
+which python
 python --version
-pip --version
+
+which python3
 python3 --version
+
+which pip
+pip --version
+
+which pip3
 pip3 --version
+
+which cmake
+cmake --version
+
 
 # download Dune dependencies
 for repo in dune-common dune-typetree dune-pdelab dune-multidomaingrid
