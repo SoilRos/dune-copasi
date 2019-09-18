@@ -44,7 +44,7 @@ test_multidomaingrid()
 int
 main(int argc, char** argv)
 {
-  auto& mpi_helper = Dune::MPIHelper::instance(argc, argv);
+  [[maybe_unused]]  auto& mpi_helper = Dune::MPIHelper::instance(argc, argv);
 
   try {
     bool passed = true;
