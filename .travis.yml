@@ -12,6 +12,8 @@ matrix:
           packages:
             - g++-9
             - libmuparser-dev
+            - python3-pip
+            - python3-dev
     # mac build
     - os: osx
       osx_image: xcode10.3
