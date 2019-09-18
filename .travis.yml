@@ -80,16 +80,22 @@ jobs:
         - bash dune-copasi/.ci/setup.sh
     - stage: build
       script: 
+        - export DUNE_OPTIONS_FILE="dune.opts"
+        - export DUNECONTROL=./dune-common/bin/dunecontrol
         - cd ..
         - bash dune-copasi/.ci/build.sh
     - stage: unit_tests
       name: "Unit Tests"
       script: 
+        - export DUNE_OPTIONS_FILE="dune.opts"
+        - export DUNECONTROL=./dune-common/bin/dunecontrol
         - cd ..
         - bash dune-copasi/.ci/unit_tests.sh
     - stage: system_tests
       name: "System Tests"
       script: 
+        - export DUNE_OPTIONS_FILE="dune.opts"
+        - export DUNECONTROL=./dune-common/bin/dunecontrol
         - cd ..
         - bash dune-copasi/.ci/system_tests.sh
       after_script:
