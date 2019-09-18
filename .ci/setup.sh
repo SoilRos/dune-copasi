@@ -27,7 +27,10 @@ do
   git clone -b $DUNE_VERSION --depth 1 --recursive https://gitlab.dune-project.org/$repo.git
 done
 
-git clone -b feature/allow-multidomain-vtk-compare-to-have-same-thresholds https://gitlab.dune-project.org/quality/dune-testtools.git
+# python virtual environment does not work in windows yet
+if [[ ! $MSYSTEM ]]; then
+	git clone -b feature/allow-multidomain-vtk-compare-to-have-same-thresholds https://gitlab.dune-project.org/quality/dune-testtools.git
+fi
 
 # temporarily use fork of dunegrid to fix gmshreader on windows:
 # todo: when fixed on master, add core/dune-grid back to list above
@@ -64,8 +67,12 @@ echo '' >> cmake-patch.txt
 git apply cmake-patch.txt
 cd ../
 
-ls
-ls muparser
+ls 
+
+# python virtual environment does not work in windows yet
+if [[ ! $MSYSTEM ]]; then
+	${DUNECONTROL} --opts=${DUNE_OPTIONS_FILE} --module=dune-testtools all
+fi
 
 for repo in dune-testtools dune-logging dune-pdelab dune-multidomaingrid
 do
