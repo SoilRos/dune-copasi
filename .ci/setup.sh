@@ -63,6 +63,7 @@ git apply cmake-patch.txt
 cd ../
 
 ls
+ls muparser
 
 for repo in dune-logging dune-pdelab dune-multidomaingrid
 do

@@ -1,107 +1,48 @@
 language: cpp
 matrix:
   include:
-    # - os: linux
-    #   dist: xenial
-    #   compiler: gcc
-    #   addons:
-    #     apt:
-    #       sources:
-    #         - ubuntu-toolchain-r-test
-    #       packages:
-    #         - g++-9
-    #         # - python3-pip
-    #   before_install:
-    #     # - sudo pip3 install virtualenv 
-    #     - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 100
-    #     - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 100
-    #     - gcc --version
-    #     - g++ --version
-    #   after_script:
-    #     # check dependencies of executable
-    #     - ldd $TRAVIS_BUILD_DIR/build-cmake/src/dune_copasi
+    # linux build
+    - os: linux
+      dist: xenial
+      compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-9
     # mac build
-    # - os: osx
-    #   osx_image: xcode10.3
-    #   compiler: clang
-    #   install:
-    #     # DUNE will only compile for 10.14 - uses some C++17 not available in earlier osx versions...
-    #     - export MACOSX_DEPLOYMENT_TARGET=10.14
-    #   after_script:
-    #     # check dependencies of executable
-    #     - otool -L $TRAVIS_BUILD_DIR/build-cmake/src/dune_copasi
+    - os: osx
+      osx_image: xcode10.3
+      compiler: clang
 
-os:
-  # - linux
-  - osx
-
-compiler:
-  # - gcc
-  - clang
-
-addons:
-  apt:
-    sources:
-      - ubuntu-toolchain-r-test
-    packages:
-      - g++-9
-
-
-stages:
-  - setup
-  - build
-  - system_tests
-  - unit_tests
-
-cache:
-  directories:
-  - $TRAVIS_BUILD_DIR/../
-
-jobs:
-  include:
-    - stage: setup
-      before_install:
-        - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 100; fi
-        - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 100; fi
-        - gcc --version
-        - g++ --version
-      install:
-        - cd ..
-        # download muparser as static library
-        - wget "https://github.com/lkeegan/libsbml-static/releases/latest/download/libsbml-static-$TRAVIS_OS_NAME.tgz"
-        - tar xzvf libsbml-static-$TRAVIS_OS_NAME.tgz
-      script:
-        # - echo 'CMAKE_FLAGS+=" -DDUNE_PYTHON_VIRTUALENV_SETUP=1 -DDUNE_PYTHON_VIRTUALENV_PATH=$PWD/dune-python-venv"' >> dune.opts
-        - echo 'CMAKE_FLAGS+=" -G '"'"'Unix Makefiles'"'"' -DGMPXX_INCLUDE_DIR:PATH='"$PWD"'/gmp/include -DGMPXX_LIB:FILEPATH='"$PWD"'/gmp/lib/libgmpxx.a -DGMP_LIB:FILEPATH='"$PWD"'/gmp/lib/libgmp.a -DCMAKE_DISABLE_FIND_PACKAGE_QuadMath=TRUE -DBUILD_TESTING=OFF -DDUNE_USE_ONLY_STATIC_LIBS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH='"$PWD"'/muparser -DF77=true "' > dune.opts
-        - export DUNE_OPTIONS_FILE="dune.opts"
-        - export DUNECONTROL=./dune-common/bin/dunecontrol
-        - echo "${DUNE_OPTIONS_FILE}"
-        # setup dependencies
-        - bash dune-copasi/.ci/setup.sh
-    - stage: build
-      script: 
-        - export DUNE_OPTIONS_FILE="dune.opts"
-        - export DUNECONTROL=./dune-common/bin/dunecontrol
-        - cd ..
-        - bash dune-copasi/.ci/build.sh
-    - stage: unit_tests
-      name: "Unit Tests"
-      script: 
-        - export DUNE_OPTIONS_FILE="dune.opts"
-        - export DUNECONTROL=./dune-common/bin/dunecontrol
-        - cd ..
-        - bash dune-copasi/.ci/unit_tests.sh
-    - stage: system_tests
-      name: "System Tests"
-      script: 
-        - export DUNE_OPTIONS_FILE="dune.opts"
-        - export DUNECONTROL=./dune-common/bin/dunecontrol
-        - cd ..
-        - bash dune-copasi/.ci/system_tests.sh
-      after_script:
-        # check dependencies of executable
-        - if [ "$TRAVIS_OS_NAME" = "osx" ]; then otool -L $TRAVIS_BUILD_DIR/build-cmake/src/dune_copasi; fi
-        - if [ "$TRAVIS_OS_NAME" = "linux" ]; then ldd $TRAVIS_BUILD_DIR/build-cmake/src/dune_copasi; fi
+before_install:
+  # DUNE will only compile for 10.14 - uses some C++17 not available in earlier osx versions...
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then export MACOSX_DEPLOYMENT_TARGET=10.14; fi
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 100; fi
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 100; fi
+  - gcc --version
+  - g++ --version
+  - cd ..
+  # download muparser as static library
+  - wget "https://github.com/lkeegan/libsbml-static/releases/latest/download/libsbml-static-$TRAVIS_OS_NAME.tgz"
+  - tar xzvf libsbml-static-$TRAVIS_OS_NAME.tgz
+install:
+  # - echo 'CMAKE_FLAGS+=" -DDUNE_PYTHON_VIRTUALENV_SETUP=1 -DDUNE_PYTHON_VIRTUALENV_PATH=$PWD/dune-python-venv"' >> dune.opts
+  - echo 'CMAKE_FLAGS+=" -G '"'"'Unix Makefiles'"'"' -DGMPXX_INCLUDE_DIR:PATH='"$PWD"'/gmp/include -DGMPXX_LIB:FILEPATH='"$PWD"'/gmp/lib/libgmpxx.a -DGMP_LIB:FILEPATH='"$PWD"'/gmp/lib/libgmp.a -DCMAKE_DISABLE_FIND_PACKAGE_QuadMath=TRUE -DBUILD_TESTING=OFF -DDUNE_USE_ONLY_STATIC_LIBS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH='"$PWD"'/muparser -DF77=true "' > dune.opts
+  - export DUNE_OPTIONS_FILE="dune.opts"
+  - export DUNECONTROL=./dune-common/bin/dunecontrol
+  - echo "${DUNE_OPTIONS_FILE}"
+  # setup dependencies
+  - bash dune-copasi/.ci/setup.sh
+script: 
+  - bash dune-copasi/.ci/build.sh
+after_script: 
+  - bash dune-copasi/.ci/unit_tests.sh
+  - bash dune-copasi/.ci/system_tests.sh
+  # check dependencies of executable
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then otool -L $TRAVIS_BUILD_DIR/build-cmake/src/dune_copasi; fi
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then ldd $TRAVIS_BUILD_DIR/build-cmake/src/dune_copasi; fi
 
 notifications:
 email: false
