@@ -10,6 +10,8 @@
 #include <dune/grid/yaspgrid.hh>
 
 #include <dune/common/math.hh>
+#include <dune/common/exceptions.hh>
+
 
 #include <cassert>
 #include <complex>
@@ -42,6 +44,7 @@ main(int argc, char** argv)
     bool passed = true;
 
     using namespace Dune::Copasi::Concept;
+    auto& mpi_helper = Dune::MPIHelper::instance(argc, argv);
 
     // check functions
     passed &= isPDELabFunction<F<double>>();
