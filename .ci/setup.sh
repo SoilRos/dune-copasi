@@ -27,6 +27,8 @@ do
   git clone -b $DUNE_VERSION --depth 1 --recursive https://gitlab.dune-project.org/$repo.git
 done
 
+git clone -b feature/allow-multidomain-vtk-compare-to-have-same-thresholds https://gitlab.dune-project.org/quality/dune-testtools.git
+
 # temporarily use fork of dunegrid to fix gmshreader on windows:
 # todo: when fixed on master, add core/dune-grid back to list above
 git clone -b gmsh_reader_fix --depth 1 --recursive https://gitlab.dune-project.org/liam.keegan/dune-grid.git
@@ -65,7 +67,7 @@ cd ../
 ls
 ls muparser
 
-for repo in dune-logging dune-pdelab dune-multidomaingrid
+for repo in dune-testtools dune-logging dune-pdelab dune-multidomaingrid
 do
   ${DUNECONTROL} --opts=${DUNE_OPTIONS_FILE} --module=$repo all
 done

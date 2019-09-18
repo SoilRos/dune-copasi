@@ -11,6 +11,7 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - g++-9
+            - libmuparser-dev
     # mac build
     - os: osx
       osx_image: xcode10.3
@@ -19,6 +20,7 @@ matrix:
 before_install:
   # DUNE will only compile for 10.14 - uses some C++17 not available in earlier osx versions...
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then export MACOSX_DEPLOYMENT_TARGET=10.14; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then sudo brew install muparser; fi
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 100; fi
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 100; fi
   - gcc --version
@@ -28,8 +30,7 @@ before_install:
   - wget "https://github.com/lkeegan/libsbml-static/releases/latest/download/libsbml-static-$TRAVIS_OS_NAME.tgz"
   - tar xzvf libsbml-static-$TRAVIS_OS_NAME.tgz
 install:
-  # - echo 'CMAKE_FLAGS+=" -DDUNE_PYTHON_VIRTUALENV_SETUP=1 -DDUNE_PYTHON_VIRTUALENV_PATH=$PWD/dune-python-venv"' >> dune.opts
-  - echo 'CMAKE_FLAGS+=" -G '"'"'Unix Makefiles'"'"' -DGMPXX_INCLUDE_DIR:PATH='"$PWD"'/gmp/include -DGMPXX_LIB:FILEPATH='"$PWD"'/gmp/lib/libgmpxx.a -DGMP_LIB:FILEPATH='"$PWD"'/gmp/lib/libgmp.a -DCMAKE_DISABLE_FIND_PACKAGE_QuadMath=TRUE -DBUILD_TESTING=OFF -DDUNE_USE_ONLY_STATIC_LIBS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH='"$PWD"'/muparser -DF77=true "' > dune.opts
+  - echo 'CMAKE_FLAGS+=" -G '"'"'Unix Makefiles'"'"' -DDUNE_PYTHON_VIRTUALENV_SETUP=1 -DDUNE_PYTHON_VIRTUALENV_PATH='"$PWD"'/dune-python-venv -DGMPXX_INCLUDE_DIR:PATH='"$PWD"'/gmp/include -DGMPXX_LIB:FILEPATH='"$PWD"'/gmp/lib/libgmpxx.a -DGMP_LIB:FILEPATH='"$PWD"'/gmp/lib/libgmp.a -DCMAKE_DISABLE_FIND_PACKAGE_QuadMath=TRUE -DBUILD_TESTING=OFF -DDUNE_USE_ONLY_STATIC_LIBS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH='"$PWD"'/muparser -DF77=true "' > dune.opts
   - export DUNE_OPTIONS_FILE="dune.opts"
   - export DUNECONTROL=./dune-common/bin/dunecontrol
   - echo "${DUNE_OPTIONS_FILE}"
