@@ -82,6 +82,10 @@ echo '' >> cmake-patch.txt
 git apply cmake-patch.txt
 cd ../
 
+cd dune-logging
+git apply ../dune-copasi/.ci/dune-logging.patch
+cd ../
+
 ls 
 
 # python virtual environment does not work in windows yet
