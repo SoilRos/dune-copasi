@@ -15,7 +15,7 @@ which python
 which python3
 which pip
 which cmake
-- if [ "$TRAVIS_OS_NAME" = "linux" ]; then dpkg -L python; fi
+if [ "$TRAVIS_OS_NAME" = "linux" ]; then dpkg -L python; fi
 
 g++ --version
 gcc --version
