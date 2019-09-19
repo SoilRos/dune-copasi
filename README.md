@@ -1,6 +1,6 @@
-[![GitLab pipeline status](https://gitlab.dune-project.org/santiago.ospina/dune-copasi/badges/master/pipeline.svg)](https://gitlab.dune-project.org/santiago.ospina/dune-copasi/commits/master)
-[![AppVeyor pipeline status](https://ci.appveyor.com/api/projects/status/6605joy2w17qvca8/branch/master?svg=true)](https://ci.appveyor.com/project/SoilRos/dune-copasi)
-[![Travis pipeline status](https://travis-ci.org/SoilRos/dune-copasi.svg?branch=master)](https://travis-ci.org/SoilRos/dune-copasi/branches)
+[![Build Status](https://gitlab.dune-project.org/santiago.ospina/dune-copasi/badges/master/pipeline.svg)](https://gitlab.dune-project.org/santiago.ospina/dune-copasi/pipelines)
+[![Build Status](https://travis-ci.org/SoilRos/dune-copasi.svg?branch=master)](https://travis-ci.org/SoilRos/dune-copasi)
+[![Build status](https://ci.appveyor.com/api/projects/status/6605joy2w17qvca8/branch/master?svg=true)](https://ci.appveyor.com/project/SoilRos/dune-copasi/branch/master)
 
 #### Dependencies
 
