@@ -439,7 +439,7 @@ public:
 
   template<typename IG, typename LFSU, typename X, typename LFSV,
             typename J>
-  std::enable_if_t<JM==JacobianMethod::Analytical>
+  typename std::enable_if<JM==JacobianMethod::Analytical>::type
   jacobian_skeleton
   ( const IG& ig,
     const LFSU& lfsu_s, const X& x_s, const LFSV& lfsv_s,
@@ -451,7 +451,7 @@ public:
   }
 
   template<typename IG, typename LFSU, typename X, typename LFSV, typename Y>
-  std::enable_if_t<JM==JacobianMethod::Analytical>
+  typename std::enable_if<JM==JacobianMethod::Analytical>::type
   jacobian_apply_skeleton
   ( const IG& ig,
     const LFSU& lfsu_s, const X& x_s, const LFSV& lfsv_s,
@@ -462,7 +462,7 @@ public:
   }
   
   template<typename IG, typename LFSU, typename X, typename LFSV, typename Y>
-  std::enable_if_t<JM==JacobianMethod::Analytical>
+  typename std::enable_if<JM==JacobianMethod::Analytical>::type
   jacobian_apply_skeleton(
     const IG& ig,
     const LFSU& lfsu_s, const X& x_s, const X& z_s, const LFSV& lfsv_s,

@@ -232,7 +232,7 @@ public:
   }
 
   template<typename EG, typename LFSU, typename X, typename LFSV, typename R>
-  std::enable_if_t<JM==JacobianMethod::Analytical>
+  typename std::enable_if<JM==JacobianMethod::Analytical>::type
   jacobian_apply_volume(const EG& eg,
                              const LFSU& lfsu,
                              const X& x,
@@ -331,7 +331,7 @@ public:
 
   //! jacobian contribution of volume term
   template<typename EG, typename LFSU, typename X, typename LFSV, typename M>
-  std::enable_if_t<JM==JacobianMethod::Analytical>
+  typename std::enable_if<JM==JacobianMethod::Analytical>::type
   jacobian_volume(const EG& eg,
                        const LFSU& lfsu,
                        const X& x,
@@ -595,7 +595,7 @@ public:
   }
 
   template<typename EG, typename LFSU, typename X, typename LFSV, typename Mat>
-  std::enable_if_t<JM==JacobianMethod::Analytical>
+  typename std::enable_if<JM==JacobianMethod::Analytical>::type
   jacobian_volume(const EG& eg,
                        const LFSU& lfsu,
                        const X& x,
@@ -631,7 +631,7 @@ public:
   }
 
   template<typename EG, typename LFSU, typename X, typename LFSV, typename R>
-  std::enable_if_t<JM==JacobianMethod::Analytical>
+  typename std::enable_if<JM==JacobianMethod::Analytical>::type
   jacobian_apply_volume(const EG& eg,
                              const LFSU& lfsu,
                              const X& x,
@@ -643,7 +643,7 @@ public:
   }
 
   template<typename EG, typename LFSU, typename X, typename LFSV, typename R>
-  std::enable_if_t<JM==JacobianMethod::Analytical>
+  typename std::enable_if<JM==JacobianMethod::Analytical>::type
   jacobian_apply_volume(const EG& eg,
                              const LFSU& lfsu,
                              const X& x,
