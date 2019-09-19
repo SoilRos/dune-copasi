@@ -2,12 +2,14 @@
 #define DUNE_COPASI_LOCAL_OPERATOR_DIFFUSION_REACTION_HH
 
 #include <dune/copasi/coefficient_mapper.hh>
+#include <dune/copasi/enum.hh>
 
 #include <dune/pdelab/common/quadraturerules.hh>
 #include <dune/pdelab/localoperator/flags.hh>
 #include <dune/pdelab/localoperator/idefault.hh>
 #include <dune/pdelab/localoperator/pattern.hh>
 #include <dune/pdelab/localoperator/numericaljacobian.hh>
+#include <dune/pdelab/localoperator/numericaljacobianapply.hh>
 
 #include <dune/geometry/referenceelements.hh>
 #include <dune/geometry/type.hh>
@@ -18,10 +20,12 @@
 
 namespace Dune::Copasi {
 
-template<class GV, class LFE, class CM = DefaultCoefficientMapper>
+template<class GV, class LFE, class CM = DefaultCoefficientMapper, JacobianMethod JM = JacobianMethod::Analytical>
 class LocalOperatorDiffusionReaction
   : public Dune::PDELab::LocalOperatorDefaultFlags
   , public Dune::PDELab::InstationaryLocalOperatorDefaultMethods<double>
+  , public PDELab::NumericalJacobianVolume<LocalOperatorDiffusionReaction<GV,LFE,CM,JM>>
+  , public PDELab::NumericalJacobianApplyVolume<LocalOperatorDiffusionReaction<GV,LFE,CM,JM>>
 {
   //! grid view
   using GridView = GV;
@@ -228,7 +232,19 @@ public:
   }
 
   template<typename EG, typename LFSU, typename X, typename LFSV, typename R>
-  void jacobian_apply_volume(const EG& eg,
+  std::enable_if_t<JM==JacobianMethod::Analytical>
+  jacobian_apply_volume(const EG& eg,
+                             const LFSU& lfsu,
+                             const X& x,
+                             const X& z,
+                             const LFSV& lfsv,
+                             R& r) const
+  {
+    _jacobian_apply_volume(eg,lfsu,x,z,lfsv,r);
+  }
+
+  template<typename EG, typename LFSU, typename X, typename LFSV, typename R>
+  void _jacobian_apply_volume(const EG& eg,
                              const LFSU& lfsu,
                              const X& x,
                              const X& z,
@@ -315,7 +331,8 @@ public:
 
   //! jacobian contribution of volume term
   template<typename EG, typename LFSU, typename X, typename LFSV, typename M>
-  void jacobian_volume(const EG& eg,
+  std::enable_if_t<JM==JacobianMethod::Analytical>
+  jacobian_volume(const EG& eg,
                        const LFSU& lfsu,
                        const X& x,
                        const LFSV& lfsv,
@@ -415,7 +432,7 @@ public:
                     const LFSV& lfsv,
                     R& r) const
   {
-    jacobian_apply_volume(eg, lfsu, x, x, lfsv, r);
+    _jacobian_apply_volume(eg, lfsu, x, x, lfsv, r);
   }
 
   //! apply local jacobian of the volume term -> linear variant
@@ -430,12 +447,13 @@ public:
   }
 };
 
-template<class GV, class LFE>
+template<class GV, class LFE, JacobianMethod JM = JacobianMethod::Analytical>
 class TemporalLocalOperatorDiffusionReaction
   : public Dune::PDELab::LocalOperatorDefaultFlags
   , public Dune::PDELab::FullVolumePattern
   , public Dune::PDELab::InstationaryLocalOperatorDefaultMethods<double>
-  , public Dune::PDELab::NumericalJacobianVolume<TemporalLocalOperatorDiffusionReaction<GV,LFE>>
+  , public Dune::PDELab::NumericalJacobianVolume<TemporalLocalOperatorDiffusionReaction<GV,LFE,JM>>
+  , public Dune::PDELab::NumericalJacobianApplyVolume<TemporalLocalOperatorDiffusionReaction<GV,LFE,JM>>
 {
   //! grid view
   using GridView = GV;
@@ -576,42 +594,45 @@ public:
     }
   }
 
-  // template<typename EG, typename LFSU, typename X, typename LFSV, typename Mat>
-  // void jacobian_volume(const EG& eg,
-  //                      const LFSU& lfsu,
-  //                      const X& x,
-  //                      const LFSV& lfsv,
-  //                      Mat& mat) const
-  // {
-  //   auto accumulate = [&](const std::size_t& component_i,
-  //                         const std::size_t& dof_i,
-  //                         const std::size_t& component_j,
-  //                         const std::size_t& dof_j,
-  //                         const auto& value) {
-  //     mat.accumulate(
-  //       lfsv.child(component_i), dof_i, lfsu.child(component_j), dof_j, value);
-  //   };
+  template<typename EG, typename LFSU, typename X, typename LFSV, typename Mat>
+  std::enable_if_t<JM==JacobianMethod::Analytical>
+  jacobian_volume(const EG& eg,
+                       const LFSU& lfsu,
+                       const X& x,
+                       const LFSV& lfsv,
+                       Mat& mat) const
+  {
+    DUNE_THROW(NotImplemented,"Analytic jacobian volume for time is not implemented");
+    // auto accumulate = [&](const std::size_t& component_i,
+    //                       const std::size_t& dof_i,
+    //                       const std::size_t& component_j,
+    //                       const std::size_t& dof_j,
+    //                       const auto& value) {
+    //   mat.accumulate(
+    //     lfsv.child(component_i), dof_i, lfsu.child(component_j), dof_j, value);
+    // };
 
-  //   // get geometry
-  //   const auto geo = eg.geometry();
+    // // get geometry
+    // const auto geo = eg.geometry();
 
-  //   // loop over quadrature points
-  //   for (std::size_t q = 0; q < _rule.size(); q++) {
-  //     const auto& position = _rule[q].position();
-  //     // get Jacobian and determinant
-  //     RF factor = _rule[q].weight() * geo.integrationElement(position);
+    // // loop over quadrature points
+    // for (std::size_t q = 0; q < _rule.size(); q++) {
+    //   const auto& position = _rule[q].position();
+    //   // get Jacobian and determinant
+    //   RF factor = _rule[q].weight() * geo.integrationElement(position);
 
-  //     // integrate mass matrix
-  //     for (std::size_t k = 0; k < _lfs_components.size();
-  //          k++) // loop over components
-  //       for (std::size_t i = 0; i < _basis_size; i++)
-  //         for (std::size_t j = 0; j < _basis_size; j++)
-  //           accumulate(k, i, k, j, _phihat[q][i] * _phihat[q][j] * factor);
-  //   }
-  // }
+    //   // integrate mass matrix
+    //   for (std::size_t k = 0; k < _lfs_components.size();
+    //        k++) // loop over components
+    //     for (std::size_t i = 0; i < _basis_size; i++)
+    //       for (std::size_t j = 0; j < _basis_size; j++)
+    //         accumulate(k, i, k, j, _phihat[q][i] * _phihat[q][j] * factor);
+    // }
+  }
 
   template<typename EG, typename LFSU, typename X, typename LFSV, typename R>
-  void jacobian_apply_volume(const EG& eg,
+  std::enable_if_t<JM==JacobianMethod::Analytical>
+  jacobian_apply_volume(const EG& eg,
                              const LFSU& lfsu,
                              const X& x,
                              const X& z,
@@ -622,7 +643,8 @@ public:
   }
 
   template<typename EG, typename LFSU, typename X, typename LFSV, typename R>
-  void jacobian_apply_volume(const EG& eg,
+  std::enable_if_t<JM==JacobianMethod::Analytical>
+  jacobian_apply_volume(const EG& eg,
                              const LFSU& lfsu,
                              const X& x,
                              const LFSV& lfsv,

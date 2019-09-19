@@ -3,8 +3,11 @@
 
 #include <dune/copasi/concepts/grid.hh>
 #include <dune/copasi/local_operator.hh>
+#include <dune/copasi/enum.hh>
 
 #include <dune/pdelab/localoperator/numericaljacobian.hh>
+#include <dune/pdelab/localoperator/numericaljacobianapply.hh>
+#include <dune/pdelab/localoperator/numericalnonlinearjacobianapply.hh>
 
 #include <algorithm>
 #include <map>
@@ -14,12 +17,15 @@ namespace Dune::Copasi {
 
 template<class Grid,
          class LocalFiniteElement,
-         class CM = DefaultCoefficientMapper>
+         class CM = DefaultCoefficientMapper,
+         JacobianMethod JM = JacobianMethod::Analytical>
 class LocalOperatorMultiDomainDiffusionReaction
   : public Dune::PDELab::LocalOperatorDefaultFlags
   , public Dune::PDELab::InstationaryLocalOperatorDefaultMethods<double>
   , public Dune::PDELab::NumericalJacobianSkeleton<
-      LocalOperatorMultiDomainDiffusionReaction<Grid, LocalFiniteElement, CM>>
+      LocalOperatorMultiDomainDiffusionReaction<Grid, LocalFiniteElement, CM, JM>>
+  , public Dune::PDELab::NumericalJacobianApplySkeleton<
+      LocalOperatorMultiDomainDiffusionReaction<Grid, LocalFiniteElement, CM, JM>>
 {
   static_assert(Concept::isMultiDomainGrid<Grid>());
 
@@ -51,7 +57,7 @@ class LocalOperatorMultiDomainDiffusionReaction
 
   using GridView = typename Grid::SubDomainGrid::LeafGridView;
   using BaseLOP =
-    LocalOperatorDiffusionReaction<GridView, LocalFiniteElement, CM>;
+    LocalOperatorDiffusionReaction<GridView, LocalFiniteElement, CM, JM>;
 
   const IndexSet& _index_set;
 
@@ -430,9 +436,44 @@ public:
       }
     }
   }
+
+  template<typename IG, typename LFSU, typename X, typename LFSV,
+            typename J>
+  std::enable_if_t<JM==JacobianMethod::Analytical>
+  jacobian_skeleton
+  ( const IG& ig,
+    const LFSU& lfsu_s, const X& x_s, const LFSV& lfsv_s,
+    const LFSU& lfsu_n, const X& x_n, const LFSV& lfsv_n,
+    J& mat_ss, J& mat_sn,
+    J& mat_ns, J& mat_nn) const
+  {
+    DUNE_THROW(NotImplemented,"Analytic jacobian is not implemented");
+  }
+
+  template<typename IG, typename LFSU, typename X, typename LFSV, typename Y>
+  std::enable_if_t<JM==JacobianMethod::Analytical>
+  jacobian_apply_skeleton
+  ( const IG& ig,
+    const LFSU& lfsu_s, const X& x_s, const LFSV& lfsv_s,
+    const LFSU& lfsu_n, const X& x_n, const LFSV& lfsv_n,
+    Y& y_s, Y& y_n) const
+  {
+    DUNE_THROW(NotImplemented,"Analytic jacobian is not implemented");
+  }
+  
+  template<typename IG, typename LFSU, typename X, typename LFSV, typename Y>
+  std::enable_if_t<JM==JacobianMethod::Analytical>
+  jacobian_apply_skeleton(
+    const IG& ig,
+    const LFSU& lfsu_s, const X& x_s, const X& z_s, const LFSV& lfsv_s,
+    const LFSU& lfsu_n, const X& x_n, const X& z_n, const LFSV& lfsv_n,
+    Y& y_s, Y& y_n) const
+  {
+    DUNE_THROW(NotImplemented,"Analytic jacobian is not implemented");
+  }
 };
 
-template<class Grid, class LocalFiniteElement>
+template<class Grid, class LocalFiniteElement, JacobianMethod JM = JacobianMethod::Analytical>
 class TemporalLocalOperatorMultiDomainDiffusionReaction
   : public Dune::PDELab::LocalOperatorDefaultFlags
   , public Dune::PDELab::InstationaryLocalOperatorDefaultMethods<double>
@@ -441,7 +482,7 @@ class TemporalLocalOperatorMultiDomainDiffusionReaction
 
   using GridView = typename Grid::SubDomainGrid::LeafGridView;
   using BaseLOP =
-    TemporalLocalOperatorDiffusionReaction<GridView, LocalFiniteElement>;
+    TemporalLocalOperatorDiffusionReaction<GridView, LocalFiniteElement, JM>;
 
   std::size_t _size;
 

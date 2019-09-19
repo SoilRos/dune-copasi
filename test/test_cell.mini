@@ -5,29 +5,23 @@ _op_v1 = 0, 1 | expand
 _name_sufix = {_op_u0}{_op_u1}{_op_v1}
 __name = test_cell_{_name_sufix}
 
-_begin_time = 0.
-_end_time = 0.01
-_time_step = 2e-3
-
 [grid]
 file = grids/test_cell.msh
 initial_level = 0
 
 [model]
-begin_time = {_begin_time}
-end_time = {_end_time}
-time_step = {_time_step}
+begin_time = 0.
+end_time = 0.01
+time_step = 2e-3
+order = 1
+ordering_type = entity_blocked
+jacobian_type = numerical
 
 [model.compartments]
 cell     = 0
 nucleoid = 1
 
 ############################ Model for cell ############################
-[model.cell]
-begin_time = {_begin_time}
-end_time = {_end_time}
-time_step = {_time_step}
-
 [model.cell.operator]
 u = {_op_u0}
 
@@ -47,11 +41,6 @@ u = 1.
 file_name = {__name}_cell
 
 ############################ Model for nucleoid ############################
-[model.nucleoid]
-begin_time = {_begin_time}
-end_time = {_end_time}
-time_step = {_time_step}
-
 [model.nucleoid.operator]
 u = {_op_u1}
 v = {_op_v1}
