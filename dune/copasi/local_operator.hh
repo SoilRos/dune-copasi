@@ -232,15 +232,21 @@ public:
   }
 
   template<typename EG, typename LFSU, typename X, typename LFSV, typename R>
-  typename std::enable_if<JM==JacobianMethod::Analytical>::type
-  jacobian_apply_volume(const EG& eg,
+  void jacobian_apply_volume(const EG& eg,
                              const LFSU& lfsu,
                              const X& x,
                              const X& z,
                              const LFSV& lfsv,
                              R& r) const
   {
-    _jacobian_apply_volume(eg,lfsu,x,z,lfsv,r);
+    if constexpr (JM == JacobianMethod::Numerical)
+    {
+      PDELab::NumericalJacobianApplyVolume<LocalOperatorDiffusionReaction>::jacobian_apply_volume(eg,lfsu,x,z,lfsv,r);
+    }
+    else
+    {
+      _jacobian_apply_volume(eg,lfsu,x,z,lfsv,r);
+    }
   }
 
   template<typename EG, typename LFSU, typename X, typename LFSV, typename R>
@@ -331,13 +337,17 @@ public:
 
   //! jacobian contribution of volume term
   template<typename EG, typename LFSU, typename X, typename LFSV, typename M>
-  typename std::enable_if<JM==JacobianMethod::Analytical>::type
-  jacobian_volume(const EG& eg,
+  void jacobian_volume(const EG& eg,
                        const LFSU& lfsu,
                        const X& x,
                        const LFSV& lfsv,
                        M& mat) const
   {
+    if constexpr (JM == JacobianMethod::Numerical)
+    {
+      PDELab::NumericalJacobianVolume<LocalOperatorDiffusionReaction>::jacobian_volume(eg,lfsu,x,lfsv,mat);
+      return;
+    }
     // assume we receive a power local finite element!
     auto x_coeff_local = [&](const std::size_t& component,
                              const std::size_t& dof) {
@@ -443,7 +453,12 @@ public:
                              const LFSV& lfsv,
                              R& r) const
   {
-    jacobian_apply_volume(eg, lfsu, x, x, lfsv, r);
+    if constexpr (JM == JacobianMethod::Numerical)
+    {
+      PDELab::NumericalJacobianApplyVolume<LocalOperatorDiffusionReaction>::jacobian_apply_volume(eg,lfsu,x,lfsv,r);
+      return;
+    }
+    _jacobian_apply_volume(eg, lfsu, x, x, lfsv, r);
   }
 };
 
@@ -595,13 +610,18 @@ public:
   }
 
   template<typename EG, typename LFSU, typename X, typename LFSV, typename Mat>
-  typename std::enable_if<JM==JacobianMethod::Analytical>::type
-  jacobian_volume(const EG& eg,
+  void jacobian_volume(const EG& eg,
                        const LFSU& lfsu,
                        const X& x,
                        const LFSV& lfsv,
                        Mat& mat) const
   {
+    if constexpr (JM == JacobianMethod::Numerical)
+    {
+      PDELab::NumericalJacobianVolume<TemporalLocalOperatorDiffusionReaction>::jacobian_volume(eg,lfsu,x,lfsv,mat);
+      return;
+    }
+
     DUNE_THROW(NotImplemented,"Analytic jacobian volume for time is not implemented");
     // auto accumulate = [&](const std::size_t& component_i,
     //                       const std::size_t& dof_i,
@@ -631,25 +651,33 @@ public:
   }
 
   template<typename EG, typename LFSU, typename X, typename LFSV, typename R>
-  typename std::enable_if<JM==JacobianMethod::Analytical>::type
-  jacobian_apply_volume(const EG& eg,
+  void jacobian_apply_volume(const EG& eg,
                              const LFSU& lfsu,
                              const X& x,
                              const X& z,
                              const LFSV& lfsv,
                              R& r) const
   {
+    if constexpr (JM == JacobianMethod::Numerical)
+    {
+      PDELab::NumericalJacobianApplyVolume<TemporalLocalOperatorDiffusionReaction>::jacobian_apply_volume(eg,lfsu,x,z,lfsv,r);
+      return;
+    }
     alpha_volume(eg, lfsu, z, lfsv, r);
   }
 
   template<typename EG, typename LFSU, typename X, typename LFSV, typename R>
-  typename std::enable_if<JM==JacobianMethod::Analytical>::type
-  jacobian_apply_volume(const EG& eg,
+  void jacobian_apply_volume(const EG& eg,
                              const LFSU& lfsu,
                              const X& x,
                              const LFSV& lfsv,
                              R& r) const
   {
+    if constexpr (JM == JacobianMethod::Numerical)
+    {
+      PDELab::NumericalJacobianApplyVolume<TemporalLocalOperatorDiffusionReaction>::jacobian_apply_volume(eg,lfsu,x,lfsv,r);
+      return;
+    }
     alpha_volume(eg, lfsu, x, lfsv, r);
   }
 };

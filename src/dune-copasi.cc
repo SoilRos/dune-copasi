@@ -71,7 +71,7 @@ int main(int argc, char** argv)
     if (order == 1)
     {
       constexpr int Order = 1;
-      if (jacobian == "analytica")
+      if (jacobian == "analytical")
       {
         constexpr Dune::Copasi::JacobianMethod Jac = Dune::Copasi::JacobianMethod::Analytical;
         if (ordering == "entity_blocked")

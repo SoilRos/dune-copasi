@@ -439,36 +439,48 @@ public:
 
   template<typename IG, typename LFSU, typename X, typename LFSV,
             typename J>
-  typename std::enable_if<JM==JacobianMethod::Analytical>::type
-  jacobian_skeleton
+  void jacobian_skeleton
   ( const IG& ig,
     const LFSU& lfsu_s, const X& x_s, const LFSV& lfsv_s,
     const LFSU& lfsu_n, const X& x_n, const LFSV& lfsv_n,
     J& mat_ss, J& mat_sn,
     J& mat_ns, J& mat_nn) const
   {
+    if constexpr (JM == JacobianMethod::Numerical)
+    {
+      PDELab::NumericalJacobianSkeleton<LocalOperatorMultiDomainDiffusionReaction>::jacobian_skeleton(ig,lfsu_s,x_s,lfsv_s,lfsu_n,x_n,lfsv_n,mat_ss,mat_sn,mat_ns,mat_nn);
+      return;
+    }
     DUNE_THROW(NotImplemented,"Analytic jacobian is not implemented");
   }
 
   template<typename IG, typename LFSU, typename X, typename LFSV, typename Y>
-  typename std::enable_if<JM==JacobianMethod::Analytical>::type
-  jacobian_apply_skeleton
+  void jacobian_apply_skeleton
   ( const IG& ig,
     const LFSU& lfsu_s, const X& x_s, const LFSV& lfsv_s,
     const LFSU& lfsu_n, const X& x_n, const LFSV& lfsv_n,
     Y& y_s, Y& y_n) const
   {
+    if constexpr (JM == JacobianMethod::Numerical)
+    {
+      PDELab::NumericalJacobianApplySkeleton<LocalOperatorMultiDomainDiffusionReaction>::jacobian_apply_skeleton(ig,lfsu_s,x_s,lfsv_s,lfsu_n,x_n,lfsv_n,y_s,y_n);
+      return;
+    }
     DUNE_THROW(NotImplemented,"Analytic jacobian is not implemented");
   }
   
   template<typename IG, typename LFSU, typename X, typename LFSV, typename Y>
-  typename std::enable_if<JM==JacobianMethod::Analytical>::type
-  jacobian_apply_skeleton(
+  void jacobian_apply_skeleton(
     const IG& ig,
     const LFSU& lfsu_s, const X& x_s, const X& z_s, const LFSV& lfsv_s,
     const LFSU& lfsu_n, const X& x_n, const X& z_n, const LFSV& lfsv_n,
     Y& y_s, Y& y_n) const
   {
+    if constexpr (JM == JacobianMethod::Numerical)
+    {
+      PDELab::NumericalJacobianApplySkeleton<LocalOperatorMultiDomainDiffusionReaction>::jacobian_apply_skeleton(ig,lfsu_s,x_s,z_s,lfsv_s,lfsu_n,x_n,z_n,lfsv_n,y_s,y_n);
+      return;
+    }
     DUNE_THROW(NotImplemented,"Analytic jacobian is not implemented");
   }
 };
