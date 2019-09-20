@@ -2,8 +2,8 @@
 #define DUNE_COPASI_LOCAL_OPERATOR_MULTIDOMAIN_DIFFUSION_REACTION_HH
 
 #include <dune/copasi/concepts/grid.hh>
-#include <dune/copasi/local_operator.hh>
 #include <dune/copasi/enum.hh>
+#include <dune/copasi/local_operator.hh>
 
 #include <dune/pdelab/localoperator/numericaljacobian.hh>
 #include <dune/pdelab/localoperator/numericaljacobianapply.hh>
@@ -23,9 +23,15 @@ class LocalOperatorMultiDomainDiffusionReaction
   : public Dune::PDELab::LocalOperatorDefaultFlags
   , public Dune::PDELab::InstationaryLocalOperatorDefaultMethods<double>
   , public Dune::PDELab::NumericalJacobianSkeleton<
-      LocalOperatorMultiDomainDiffusionReaction<Grid, LocalFiniteElement, CM, JM>>
+      LocalOperatorMultiDomainDiffusionReaction<Grid,
+                                                LocalFiniteElement,
+                                                CM,
+                                                JM>>
   , public Dune::PDELab::NumericalJacobianApplySkeleton<
-      LocalOperatorMultiDomainDiffusionReaction<Grid, LocalFiniteElement, CM, JM>>
+      LocalOperatorMultiDomainDiffusionReaction<Grid,
+                                                LocalFiniteElement,
+                                                CM,
+                                                JM>>
 {
   static_assert(Concept::isMultiDomainGrid<Grid>());
 
@@ -437,55 +443,85 @@ public:
     }
   }
 
-  template<typename IG, typename LFSU, typename X, typename LFSV,
-            typename J>
-  void jacobian_skeleton
-  ( const IG& ig,
-    const LFSU& lfsu_s, const X& x_s, const LFSV& lfsv_s,
-    const LFSU& lfsu_n, const X& x_n, const LFSV& lfsv_n,
-    J& mat_ss, J& mat_sn,
-    J& mat_ns, J& mat_nn) const
+  template<typename IG, typename LFSU, typename X, typename LFSV, typename J>
+  void jacobian_skeleton(const IG& ig,
+                         const LFSU& lfsu_s,
+                         const X& x_s,
+                         const LFSV& lfsv_s,
+                         const LFSU& lfsu_n,
+                         const X& x_n,
+                         const LFSV& lfsv_n,
+                         J& mat_ss,
+                         J& mat_sn,
+                         J& mat_ns,
+                         J& mat_nn) const
   {
-    if constexpr (JM == JacobianMethod::Numerical)
-    {
-      PDELab::NumericalJacobianSkeleton<LocalOperatorMultiDomainDiffusionReaction>::jacobian_skeleton(ig,lfsu_s,x_s,lfsv_s,lfsu_n,x_n,lfsv_n,mat_ss,mat_sn,mat_ns,mat_nn);
+    // if constexpr (JM == JacobianMethod::Numerical) {
+      PDELab::NumericalJacobianSkeleton<
+        LocalOperatorMultiDomainDiffusionReaction>::jacobian_skeleton(ig,
+                                                                      lfsu_s,
+                                                                      x_s,
+                                                                      lfsv_s,
+                                                                      lfsu_n,
+                                                                      x_n,
+                                                                      lfsv_n,
+                                                                      mat_ss,
+                                                                      mat_sn,
+                                                                      mat_ns,
+                                                                      mat_nn);
       return;
-    }
-    DUNE_THROW(NotImplemented,"Analytic jacobian is not implemented");
+    // }
+    // DUNE_THROW(NotImplemented, "Analytic jacobian is not implemented");
   }
 
   template<typename IG, typename LFSU, typename X, typename LFSV, typename Y>
-  void jacobian_apply_skeleton
-  ( const IG& ig,
-    const LFSU& lfsu_s, const X& x_s, const LFSV& lfsv_s,
-    const LFSU& lfsu_n, const X& x_n, const LFSV& lfsv_n,
-    Y& y_s, Y& y_n) const
+  void jacobian_apply_skeleton(const IG& ig,
+                               const LFSU& lfsu_s,
+                               const X& x_s,
+                               const LFSV& lfsv_s,
+                               const LFSU& lfsu_n,
+                               const X& x_n,
+                               const LFSV& lfsv_n,
+                               Y& y_s,
+                               Y& y_n) const
   {
-    if constexpr (JM == JacobianMethod::Numerical)
-    {
-      PDELab::NumericalJacobianApplySkeleton<LocalOperatorMultiDomainDiffusionReaction>::jacobian_apply_skeleton(ig,lfsu_s,x_s,lfsv_s,lfsu_n,x_n,lfsv_n,y_s,y_n);
+    // if constexpr (JM == JacobianMethod::Numerical) {
+      PDELab::NumericalJacobianApplySkeleton<
+        LocalOperatorMultiDomainDiffusionReaction>::
+        jacobian_apply_skeleton(
+          ig, lfsu_s, x_s, lfsv_s, lfsu_n, x_n, lfsv_n, y_s, y_n);
       return;
-    }
-    DUNE_THROW(NotImplemented,"Analytic jacobian is not implemented");
+    // }
+    // DUNE_THROW(NotImplemented, "Analytic jacobian is not implemented");
   }
-  
+
   template<typename IG, typename LFSU, typename X, typename LFSV, typename Y>
-  void jacobian_apply_skeleton(
-    const IG& ig,
-    const LFSU& lfsu_s, const X& x_s, const X& z_s, const LFSV& lfsv_s,
-    const LFSU& lfsu_n, const X& x_n, const X& z_n, const LFSV& lfsv_n,
-    Y& y_s, Y& y_n) const
+  void jacobian_apply_skeleton(const IG& ig,
+                               const LFSU& lfsu_s,
+                               const X& x_s,
+                               const X& z_s,
+                               const LFSV& lfsv_s,
+                               const LFSU& lfsu_n,
+                               const X& x_n,
+                               const X& z_n,
+                               const LFSV& lfsv_n,
+                               Y& y_s,
+                               Y& y_n) const
   {
-    if constexpr (JM == JacobianMethod::Numerical)
-    {
-      PDELab::NumericalJacobianApplySkeleton<LocalOperatorMultiDomainDiffusionReaction>::jacobian_apply_skeleton(ig,lfsu_s,x_s,z_s,lfsv_s,lfsu_n,x_n,z_n,lfsv_n,y_s,y_n);
+    if constexpr (JM == JacobianMethod::Numerical) {
+      PDELab::NumericalJacobianApplySkeleton<
+        LocalOperatorMultiDomainDiffusionReaction>::
+        jacobian_apply_skeleton(
+          ig, lfsu_s, x_s, z_s, lfsv_s, lfsu_n, x_n, z_n, lfsv_n, y_s, y_n);
       return;
     }
-    DUNE_THROW(NotImplemented,"Analytic jacobian is not implemented");
+    DUNE_THROW(NotImplemented, "Analytic jacobian is not implemented");
   }
 };
 
-template<class Grid, class LocalFiniteElement, JacobianMethod JM = JacobianMethod::Analytical>
+template<class Grid,
+         class LocalFiniteElement,
+         JacobianMethod JM = JacobianMethod::Analytical>
 class TemporalLocalOperatorMultiDomainDiffusionReaction
   : public Dune::PDELab::LocalOperatorDefaultFlags
   , public Dune::PDELab::InstationaryLocalOperatorDefaultMethods<double>

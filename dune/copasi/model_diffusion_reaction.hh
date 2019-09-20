@@ -3,12 +3,12 @@
 
 #include <dune/copasi/coefficient_mapper.hh>
 #include <dune/copasi/concepts/grid.hh>
+#include <dune/copasi/enum.hh>
 #include <dune/copasi/grid_function_writer.hh>
 #include <dune/copasi/local_operator.hh>
 #include <dune/copasi/model_base.hh>
 #include <dune/copasi/model_state.hh>
 #include <dune/copasi/multidomain_local_finite_element_map.hh>
-#include <dune/copasi/enum.hh>
 
 #include <dune/pdelab/backend/istl.hh>
 #include <dune/pdelab/constraints/conforming.hh>

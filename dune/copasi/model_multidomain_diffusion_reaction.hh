@@ -54,7 +54,8 @@ class ModelMultiDomainDiffusionReaction : public ModelBase
 
   using SubDomainGridView = typename Grid::SubDomainGrid::LeafGridView;
 
-  using SubModelTraits = ModelDiffusionReactionTraits<Grid, SubDomainGridView, order, OT>;
+  using SubModelTraits =
+    ModelDiffusionReactionTraits<Grid, SubDomainGridView, order, OT>;
   using SubModel = ModelDiffusionReaction<SubModelTraits>;
 
   //! Grid view
