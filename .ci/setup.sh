@@ -86,7 +86,7 @@ cd dune-logging
 git apply ../dune-copasi/.ci/dune-logging.patch
 cd ../
 
-ls 
+ls
 
 # python virtual environment does not work in windows yet
 if [[ ! $MSYSTEM ]]; then
