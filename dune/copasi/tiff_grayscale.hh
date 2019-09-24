@@ -6,8 +6,9 @@
 
 #include <tiffio.h>
 
-#include <iostream>
 #include <string>
+#include <queue>
+#include <memory>
 
 namespace Dune::Copasi {
 
@@ -19,20 +20,34 @@ class TIFFGrayscale
 
   struct TIFFGrayscaleRow
   {
-    TIFFGrayscaleRow(const T* const tiff_buffer, const short& col_size)
+    TIFFGrayscaleRow(const T* const tiff_buffer, const T& row, const short& col_size)
       : _tiff_buffer(tiff_buffer)
+      , _row(row)
       , _col_size(col_size)
     {}
+
+    TIFFGrayscaleRow(TIFF* const tiff_file, const T& row, const short& col_size)
+      : _row(row)
+      , _col_size(col_size)
+    {
+      T* raw_buffer = (T*)_TIFFmalloc(TIFFScanlineSize(tiff_file));
+      auto deleter = [](auto& ptr){_TIFFfree(ptr);};
+      _tiff_buffer = std::shared_ptr<T>(raw_buffer, deleter);
+      TIFFReadScanline(tiff_file, _tiff_buffer.get(), _row);
+    }
 
     double operator[](const T& col) const
     {
       assert((short)col < _col_size);
-      return (double)*(_tiff_buffer + col) / std::numeric_limits<T>::max();
+      return (double)*(_tiff_buffer.get() + col) / std::numeric_limits<T>::max();
     }
 
     std::size_t size() const { return static_cast<std::size_t>(_col_size); }
+    std::size_t row() const { return static_cast<std::size_t>(_row); }
 
-    const T* const _tiff_buffer;
+  private:
+    std::shared_ptr<T> _tiff_buffer;
+    const T _row;
     const short& _col_size;
   };
 
@@ -69,21 +84,23 @@ public:
     _x_off = _y_off = 0.;
     TIFFGetField(_tiff_file, TIFFTAG_XPOSITION, &_x_off);
     TIFFGetField(_tiff_file, TIFFTAG_YPOSITION, &_y_off);
-    _tiff_buffer = (T*)_TIFFmalloc(TIFFScanlineSize(_tiff_file));
+  }
+
+  ~TIFFGrayscale()
+  {
+    TIFFClose(_tiff_file);
   }
 
   TIFFGrayscaleRow operator[](T row) const
   {
     assert((short)row < _row_size);
-    // This is not thread safe!!
-    TIFFReadScanline(_tiff_file, _tiff_buffer, row);
-    return TIFFGrayscaleRow(_tiff_buffer, _col_size);
+    return cache(row);
   }
 
   template<class DF>
   double operator()(const DF& x, const DF& y)
   {
-    // here we assume TIFFTAG_RESOLUTIONUNIT has same dimenssion as grid.
+    // here we assume TIFFTAG_RESOLUTIONUNIT has same units as grid.
     // since we never check grid units, we also do not check tiff units
     assert(FloatCmp::ge((float)x, _x_off));
     assert(FloatCmp::ge((float)y, _y_off));
@@ -98,16 +115,28 @@ public:
 
   std::size_t cols() const { return static_cast<std::size_t>(_col_size); }
 
-  ~TIFFGrayscale()
-  {
-    if (_tiff_buffer)
-      _TIFFfree(_tiff_buffer);
-    TIFFClose(_tiff_file);
-  }
+private:
+
+const TIFFGrayscaleRow& cache(T row) const
+{
+  auto it = _row_cache.rbegin();
+  while ((it != _row_cache.rend()) and (it->row() != row))
+    it++;
+  
+  if (it != _row_cache.rend())
+    return *it;
+  else
+    _row_cache.emplace_back(_tiff_file, row, _col_size);
+  
+  if (_row_cache.size() >= 5)
+    _row_cache.pop_front();
+
+  return *(_row_cache.rbegin());
+}
 
 private:
   TIFF* _tiff_file;
-  T* _tiff_buffer;
+  mutable std::deque<TIFFGrayscaleRow> _row_cache;
   short _row_size;
   short _col_size;
   float _x_res, _x_off;
