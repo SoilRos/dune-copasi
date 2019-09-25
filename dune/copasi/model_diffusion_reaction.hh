@@ -91,11 +91,14 @@ public:
   //! Constraints builder
   using CON = PDELab::ConformingDirichletConstraints;
 
+  //! Entity set
+  using ES = Dune::PDELab::NonOverlappingEntitySet<HGV>;
+
   //! Leaf vector backend
   using LVBE = PDELab::ISTL::VectorBackend<>;
 
   //! Leaf grid function space
-  using LGFS = PDELab::GridFunctionSpace<HGV, FEM, CON, LVBE>;
+  using LGFS = PDELab::GridFunctionSpace<ES, FEM, CON, LVBE>;
 
   //! Vector backend
   using VBE = LVBE;

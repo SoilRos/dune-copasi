@@ -139,8 +139,9 @@ ModelDiffusionReaction<Traits>::
   auto finite_element_map = std::make_shared<FEM>(_grid_view, base_fem);
 
   _logger.trace("setup grid function space for component {}"_fmt, name);
+  const ES entity_set(_grid->leafGridView());
   auto comp_gfs =
-    std::make_shared<LGFS>(_grid->leafGridView(), finite_element_map);
+    std::make_shared<LGFS>(entity_set, finite_element_map);
   comp_gfs->name(name);
 
   return comp_gfs;
