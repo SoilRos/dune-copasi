@@ -284,12 +284,22 @@ public:
 
     _coefficient_mapper.bind(entity);
 
+    DynamicVector<RF> u(_components);
+    DynamicVector<RF> diffusion(_lfs_components.size());
+    DynamicVector<RF> reaction(_lfs_components.size());
+    DynamicVector<FieldVector<RF, dim>> grad(_basis_size);
+
     // loop over quadrature points
     for (std::size_t q = 0; q < _rule.size(); q++) {
+
       const auto& position = _rule[q].position();
 
+      std::fill(u.begin(), u.end(), 0.);
+      std::fill(diffusion.begin(), diffusion.end(), 0.);
+      std::fill(reaction.begin(), reaction.end(), 0.);
+      std::fill(grad.begin(), grad.end(), FieldVector<RF, dim>(0.));
+
       // get diffusion coefficient
-      DynamicVector<RF> diffusion(_lfs_components.size());
       for (std::size_t k = 0; k < _lfs_components.size(); k++)
         _diffusion_gf[k]->evaluate(entity, position, diffusion[k]);
 
@@ -298,13 +308,11 @@ public:
       RF factor = _rule[q].weight() * geo.integrationElement(position);
 
       // evaluate concentrations at quadrature point
-      DynamicVector<RF> u(_components);
       for (std::size_t k = 0; k < _components; k++)
         for (std::size_t j = 0; j < _basis_size; j++) // ansatz func. loop
           u[k] += _coefficient_mapper(x_coeff_local, k, j) * _phihat[q][j];
 
       // get reaction term
-      DynamicVector<RF> reaction(_lfs_components.size());
       for (std::size_t k = 0; k < _lfs_components.size(); k++) {
         _reaction_gf[k]->update(u);
         _reaction_gf[k]->evaluate(entity, position, reaction[k]);
@@ -312,7 +320,6 @@ public:
 
       // compute gradients of basis functions in transformed element
       // (independent of component)
-      DynamicVector<FieldVector<RF, dim>> grad(_basis_size);
       for (std::size_t i = 0; i < dim; i++)             // rows of S
         for (std::size_t k = 0; k < dim; k++)           // columns of S
           for (std::size_t j = 0; j < _basis_size; j++) // columns of _gradhat
@@ -327,13 +334,14 @@ public:
             graduh[d] += grad[j][d] * z_coeff_local(k, j);
 
         // scalar products
-        for (std::size_t d = 0; d < dim; d++)           // rows of grad
-          for (std::size_t i = 0; i < _basis_size; i++) // test func. loop
-            accumulate(k, i, diffusion[k] * grad[i][d] * graduh[d] * factor);
-
-        // reaction term
         for (std::size_t i = 0; i < _basis_size; i++) // test func. loop
-          accumulate(k, i, -reaction[k] * _phihat[q][i] * factor);
+        {
+          typename R::value_type rhs = -reaction[k] * _phihat[q][i];
+          for (std::size_t d = 0; d < dim; d++)// rows of grad
+            rhs += diffusion[k] * grad[i][d] * graduh[d];
+          accumulate(k, i, rhs * factor);
+
+        }
       }
     }
   }
@@ -374,32 +382,32 @@ public:
 
     _coefficient_mapper.bind(entity);
 
+    DynamicVector<RF> u(_components);
+    DynamicVector<RF> diffusion(_lfs_components.size());
+    DynamicVector<RF> jacobian(_lfs_components.size() *
+                                _lfs_components.size());
+    DynamicVector<FieldVector<RF, dim>> grad(_basis_size);
+
     // loop over quadrature points
     for (std::size_t q = 0; q < _rule.size(); q++) {
-      // local stiffness matrix (independent of component)
-      std::vector<std::vector<RF>> A(_basis_size);
-      std::fill(A.begin(), A.end(), std::vector<RF>(_basis_size));
-
+      
       const auto& position = _rule[q].position();
 
+      std::fill(u.begin(), u.end(), 0.);
+      std::fill(diffusion.begin(), diffusion.end(), 0.);
+      std::fill(jacobian.begin(), jacobian.end(), 0.);
+      std::fill(grad.begin(), grad.end(), FieldVector<RF, dim>(0.));
+
       // get diffusion coefficient
-      DynamicVector<RF> diffusion(_lfs_components.size());
       for (std::size_t k = 0; k < _lfs_components.size(); k++)
         _diffusion_gf[k]->evaluate(entity, position, diffusion[k]);
 
-      // get jacobian and determinant
-      FieldMatrix<DF, dim, dim> S = geo.jacobianInverseTransposed(position);
-      RF factor = _rule[q].weight() * geo.integrationElement(position);
-
       // evaluate concentrations at quadrature point
-      DynamicVector<RF> u(_components);
       for (std::size_t k = 0; k < _components; k++)
         for (std::size_t j = 0; j < _basis_size; j++) //  ansatz func. loop
           u[k] += _coefficient_mapper(x_coeff_local, k, j) * _phihat[q][j];
 
       // evaluate reaction term
-      DynamicVector<RF> jacobian(_lfs_components.size() *
-                                 _lfs_components.size());
       for (std::size_t k = 0; k < _lfs_components.size(); k++) {
         for (std::size_t l = 0; l < _lfs_components.size(); l++) {
           const auto j = _lfs_components.size() * k + l;
@@ -408,33 +416,41 @@ public:
         }
       }
 
+      // get jacobian and determinant
+      FieldMatrix<DF, dim, dim> S = geo.jacobianInverseTransposed(position);
+      RF factor = _rule[q].weight() * geo.integrationElement(position);
+
       // compute gradients of basis functions in transformed element
       // (independent of component)
-      DynamicVector<FieldVector<RF, dim>> grad(_basis_size);
       for (std::size_t i = 0; i < dim; i++)             // rows of S
         for (std::size_t k = 0; k < dim; k++)           // columns of S
           for (std::size_t j = 0; j < _basis_size; j++) // columns of _gradhat
             grad[j][i] += S[i][k] * _gradhat[q][j][0][k];
 
+      auto do_link = [&](std::size_t comp_i, std::size_t comp_j) {
+        auto it = _component_pattern.find(std::make_pair(comp_i, comp_j));
+        return (it != _component_pattern.end());
+      };
+
       // compute grad^T * grad
       for (std::size_t k = 0; k < _lfs_components.size(); k++)
-        for (std::size_t i = 0; i < _basis_size; i++)
-          for (std::size_t d = 0; d < dim; d++)
-            for (std::size_t j = 0; j < _basis_size; j++)
-              accumulate(
-                k, i, k, j, diffusion[k] * grad[i][d] * grad[j][d] * factor);
-
-      for (std::size_t k = 0; k < _lfs_components.size(); k++)
-        for (std::size_t l = 0; l < _lfs_components.size(); l++) {
+      {
+        for (std::size_t l = 0; l < _lfs_components.size(); l++) 
+        {
+          if (not do_link(k,l))
+            continue;
           const auto j = _lfs_components.size() * k + l;
           for (std::size_t m = 0; m < _basis_size; m++)
-            for (std::size_t n = 0; n < _basis_size; n++)
-              accumulate(k,
-                         m,
-                         l,
-                         n,
-                         _phihat[q][m] * jacobian[j] * _phihat[q][n] * factor);
+          {
+            for (std::size_t n = 0; n < _basis_size; n++) {
+              typename M::value_type jac = - jacobian[j] * _phihat[q][m] * _phihat[q][n];
+              if (l==k) for (std::size_t d = 0; d < dim; d++)
+                jac += diffusion[k] * grad[m][d] * grad[n][d];
+              accumulate(k, m, l, n, jac * factor);
+            }
+          }
         }
+      }
     }
   }
 
