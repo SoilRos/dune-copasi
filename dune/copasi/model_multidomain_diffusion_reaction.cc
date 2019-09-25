@@ -322,7 +322,7 @@ ModelMultiDomainDiffusionReaction<Traits>::
         std::cout << "Error: Cannot create directory " << path << std::endl;
     }
 
-    _sequential_writer[i] = std::make_shared<SW>(writer, file_name, path, path);
+    _sequential_writer[i] = std::make_shared<SW>(writer, file_name, path, "");
   }
 }
 
