@@ -14,8 +14,6 @@ begin_time = 0.
 end_time = 0.01
 time_step = 2e-3
 order = 1
-ordering_type = entity_blocked
-jacobian_type = numerical
 
 [model.compartments]
 cell     = 0

@@ -31,12 +31,17 @@ if (dune-testtools_FOUND)
     SCRIPT          dune_vtkcompare.py
     INIFILE         test_exp.mini)
 
-  add_system_test_per_target(
-    TARGET          dune_copasi
+  dune_add_system_test(
+    SOURCE          test_jacobian.cc
+    BASENAME        test_jacobian
     SCRIPT          dune_vtkcompare.py
-    INIFILE         test_local_operator.mini)
+    INIFILE         test_jacobian.mini)
+
+  target_link_libraries(test_jacobian PRIVATE dune_copasi_lib)
 
   # make sure dune_copasi is built by default
   set_property(TARGET dune_copasi PROPERTY EXCLUDE_FROM_ALL 0)
 
 endif()
+
+add_custom_target(build_system_tests DEPENDS test_jacobian)

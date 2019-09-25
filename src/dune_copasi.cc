@@ -71,54 +71,16 @@ int main(int argc, char** argv)
     if (order == 1)
     {
       constexpr int Order = 1;
-      if (jacobian == "analytical")
-      {
-        constexpr Dune::Copasi::JacobianMethod Jac = Dune::Copasi::JacobianMethod::Analytical;
-        if (ordering == "entity_blocked")
-        {
-          using Ordering = Dune::PDELab::EntityBlockedOrderingTag;
-          using ModelTraits = Dune::Copasi::ModelMultiDomainDiffusionReactionTraits<Grid,Order,Ordering,Jac>;
-          Dune::Copasi::ModelMultiDomainDiffusionReaction<ModelTraits> model(grid_ptr,model_config);
-          model.run();
-        }
-        else if (ordering == "lexicographic")
-        {
-          using Ordering = Dune::PDELab::LexicographicOrderingTag;
-          using ModelTraits = Dune::Copasi::ModelMultiDomainDiffusionReactionTraits<Grid,Order,Ordering,Jac>;
-          Dune::Copasi::ModelMultiDomainDiffusionReaction<ModelTraits> model(grid_ptr,model_config);
-          model.run();
-        }
-        else 
-        {
-          DUNE_THROW(Dune::IOError,"Ordering type " << ordering << " is not supported by dune-copasi");        
-        }
-      }
-      else if (jacobian == "numerical")
-      {
-        constexpr Dune::Copasi::JacobianMethod Jac = Dune::Copasi::JacobianMethod::Numerical;
-        if (ordering == "entity_blocked")
-        {
-          using Ordering = Dune::PDELab::EntityBlockedOrderingTag;
-          using ModelTraits = Dune::Copasi::ModelMultiDomainDiffusionReactionTraits<Grid,Order,Ordering,Jac>;
-          Dune::Copasi::ModelMultiDomainDiffusionReaction<ModelTraits> model(grid_ptr,model_config);
-          model.run();
-        }
-        else if (ordering == "lexicographic")
-        {
-          using Ordering = Dune::PDELab::LexicographicOrderingTag;
-          using ModelTraits = Dune::Copasi::ModelMultiDomainDiffusionReactionTraits<Grid,Order,Ordering,Jac>;
-          Dune::Copasi::ModelMultiDomainDiffusionReaction<ModelTraits> model(grid_ptr,model_config);
-          model.run();
-        }
-        else 
-        {
-          DUNE_THROW(Dune::IOError,"Ordering type " << ordering << " is not supported by dune-copasi");        
-        }
-      }
-      else 
-      {
-        DUNE_THROW(Dune::IOError,"Jacobian type " << jacobian << " is not supported by dune-copasi");        
-      }
+      using ModelTraits = Dune::Copasi::ModelMultiDomainDiffusionReactionTraits<Grid,Order>;
+      Dune::Copasi::ModelMultiDomainDiffusionReaction<ModelTraits> model(grid_ptr,model_config);
+      model.run();
+    } 
+    else if (order == 2)
+    {
+      constexpr int Order = 2;
+      using ModelTraits = Dune::Copasi::ModelMultiDomainDiffusionReactionTraits<Grid,Order>;
+      Dune::Copasi::ModelMultiDomainDiffusionReaction<ModelTraits> model(grid_ptr,model_config);
+      model.run();
     } 
     else
     {

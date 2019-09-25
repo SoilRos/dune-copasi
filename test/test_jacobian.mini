@@ -1,7 +1,6 @@
 _jacobian_type = numerical, analytical           | expand
-_ordering_type = entity_blocked, lexicographic   | expand
-_name_sufix = {_jacobian_type}_{_ordering_type}
-__name = test_local_operator_{_name_sufix}
+_name_sufix = {_jacobian_type}
+__name = test_jacobian_{_name_sufix}
 
 [grid]
 file = grids/test_cell.msh
@@ -12,7 +11,8 @@ begin_time = 0.
 end_time = 0.01
 time_step = 2e-3
 order = 1
-ordering_type = {_ordering_type}
+
+# extra 
 jacobian_type = {_jacobian_type}
 
 [model.compartments]

@@ -16,8 +16,6 @@ begin_time = 0.
 end_time = 10
 time_step = 0.1
 order = 1
-ordering_type = entity_blocked
-jacobian_type = numerical
 
 [model.compartments]
 domain     = 0
