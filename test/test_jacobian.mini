@@ -1,6 +1,6 @@
 _jacobian_type = numerical, analytical           | expand
 _name_sufix = {_jacobian_type}
-__name = test_jacobian_{_name_sufix}
+__name = {_name_sufix}
 
 [grid]
 file = grids/test_cell.msh
