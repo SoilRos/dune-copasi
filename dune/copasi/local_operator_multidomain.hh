@@ -135,8 +135,13 @@ public:
                comp_o++) {
             if (_component_name[domain_i][comp_i] ==
                 _component_name[domain_o][comp_o]) {
-              std::array<std::size_t, 3> key_i{ domain_i, domain_o, comp_i };
-              _component_offset.insert(std::make_pair(key_i, comp_o));
+              int op_i = config.template get<int>(compartments[domain_i] + ".operator." + _component_name[domain_i][comp_i]);
+              int op_o = config.template get<int>(compartments[domain_o] + ".operator." + _component_name[domain_o][comp_o]);
+              // only assign offset when they are in the same operator, otherwise update is managed by coefficient manager
+              if (op_i == op_o) {
+                std::array<std::size_t, 3> key_i{ domain_i, domain_o, comp_i };
+                _component_offset.insert(std::make_pair(key_i, comp_o));
+              }
             }
           }
         }
