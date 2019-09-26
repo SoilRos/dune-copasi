@@ -130,14 +130,15 @@ public:
       for (std::size_t comp_i = 0; comp_i < _component_name[domain_i].size();
            comp_i++) {
         for (std::size_t domain_o = 0; domain_o < _size; ++domain_o) {
-          // notice that _component_offset is agnostic on which operator is given component
+          // notice that _component_offset is agnostic on which operator is
+          // given component
           for (std::size_t comp_o = 0;
                comp_o < _component_name[domain_o].size();
                comp_o++) {
             if (_component_name[domain_i][comp_i] ==
                 _component_name[domain_o][comp_o]) {
-                std::array<std::size_t, 3> key_i{ domain_i, domain_o, comp_i };
-                _component_offset.insert(std::make_pair(key_i, comp_o));
+              std::array<std::size_t, 3> key_i{ domain_i, domain_o, comp_i };
+              _component_offset.insert(std::make_pair(key_i, comp_o));
             }
           }
         }
@@ -505,7 +506,11 @@ public:
                              const std::size_t& component_j,
                              const std::size_t& dof_j,
                              const auto& value) {
-      mat_ii.accumulate(lfsu_di.child(component_i),dof_i,lfsu_di.child(component_j),dof_j,value);
+      mat_ii.accumulate(lfsu_di.child(component_i),
+                        dof_i,
+                        lfsu_di.child(component_j),
+                        dof_j,
+                        value);
     };
 
     auto accumulate_io = [&](const std::size_t& component_i,
@@ -513,7 +518,11 @@ public:
                              const std::size_t& component_j,
                              const std::size_t& dof_j,
                              const auto& value) {
-      mat_io.accumulate(lfsu_di.child(component_i),dof_i,lfsu_do.child(component_j),dof_j,value);
+      mat_io.accumulate(lfsu_di.child(component_i),
+                        dof_i,
+                        lfsu_do.child(component_j),
+                        dof_j,
+                        value);
     };
 
     auto accumulate_oi = [&](const std::size_t& component_i,
@@ -521,7 +530,11 @@ public:
                              const std::size_t& component_j,
                              const std::size_t& dof_j,
                              const auto& value) {
-      mat_oi.accumulate(lfsu_do.child(component_i),dof_i,lfsu_di.child(component_j),dof_j,value);
+      mat_oi.accumulate(lfsu_do.child(component_i),
+                        dof_i,
+                        lfsu_di.child(component_j),
+                        dof_j,
+                        value);
     };
 
     auto accumulate_oo = [&](const std::size_t& component_i,
@@ -529,7 +542,11 @@ public:
                              const std::size_t& component_j,
                              const std::size_t& dof_j,
                              const auto& value) {
-      mat_oo.accumulate(lfsu_do.child(component_i),dof_i,lfsu_do.child(component_j),dof_j,value);
+      mat_oo.accumulate(lfsu_do.child(component_i),
+                        dof_i,
+                        lfsu_do.child(component_j),
+                        dof_j,
+                        value);
     };
 
     typename IG::Entity::Geometry::JacobianInverseTransposed jac;
@@ -552,60 +569,66 @@ public:
       for (std::size_t i = 0; i < lfsu_di.degree(); i++) // loop over components
       {
         // has child space something to compute?
-        if (lfsu_di.child(i).size() == 0) continue; 
+        if (lfsu_di.child(i).size() == 0)
+          continue;
         const std::size_t comp_i =
           _local_operator[domain_i]->_lfs_components[i];
         std::array<std::size_t, 3> inside_comp{ domain_i, domain_o, comp_i };
         auto it = _component_offset.find(inside_comp);
 
-        if (it != _component_offset.end())
-        {
+        if (it != _component_offset.end()) {
           // compute inside jacobian
           for (std::size_t j = 0; j < lfsu_di.child(i).size(); j++)
             for (std::size_t k = 0; k < lfsu_di.child(i).size(); k++)
-              accumulate_ii(comp_i,j,comp_i,k, factor * phiu_i[j] * phiu_i[k]);
+              accumulate_ii(
+                comp_i, j, comp_i, k, factor * phiu_i[j] * phiu_i[k]);
 
           // find index of outside component in lfs
           const std::size_t comp_o = it->second;
           const auto& lfs_comp_o = _local_operator[domain_o]->_lfs_components;
           auto o_it = std::find(lfs_comp_o.begin(), lfs_comp_o.end(), comp_o);
-          if (o_it==lfs_comp_o.end()) continue;
-          std::size_t o = std::distance(lfs_comp_o.begin(),o_it);
+          if (o_it == lfs_comp_o.end())
+            continue;
+          std::size_t o = std::distance(lfs_comp_o.begin(), o_it);
 
           // compute inside-outside jacobian
           for (std::size_t j = 0; j < lfsu_di.child(i).size(); j++)
             for (std::size_t k = 0; k < lfsu_do.child(o).size(); k++)
-              accumulate_io(comp_i,j,comp_o,k, - factor * phiu_i[j] * phiu_o[k]);
+              accumulate_io(
+                comp_i, j, comp_o, k, -factor * phiu_i[j] * phiu_o[k]);
         }
       }
 
       for (std::size_t o = 0; o < lfsu_do.degree(); o++) // loop over components
       {
         // has child space something to compute?
-        if (lfsu_do.child(o).size() == 0) continue; 
+        if (lfsu_do.child(o).size() == 0)
+          continue;
         const std::size_t comp_o =
           _local_operator[domain_o]->_lfs_components[o];
         std::array<std::size_t, 3> outside_comp{ domain_o, domain_i, comp_o };
         auto it = _component_offset.find(outside_comp);
 
-        if (it != _component_offset.end())
-        {
+        if (it != _component_offset.end()) {
           // compute outside jacobian
           for (std::size_t j = 0; j < lfsu_do.child(o).size(); j++)
             for (std::size_t k = 0; k < lfsu_do.child(o).size(); k++)
-              accumulate_oo(comp_o,j,comp_o,k, factor * phiu_o[j] * phiu_o[k]);
+              accumulate_oo(
+                comp_o, j, comp_o, k, factor * phiu_o[j] * phiu_o[k]);
 
           // find index of outside component in lfs
           const std::size_t comp_i = it->second;
           const auto& lfs_comp_i = _local_operator[domain_i]->_lfs_components;
           auto i_it = std::find(lfs_comp_i.begin(), lfs_comp_i.end(), comp_i);
-          if (i_it==lfs_comp_i.end()) continue;
-          std::size_t i = std::distance(lfs_comp_i.begin(),i_it);
+          if (i_it == lfs_comp_i.end())
+            continue;
+          std::size_t i = std::distance(lfs_comp_i.begin(), i_it);
 
           // compute inside-outside jacobian
           for (std::size_t j = 0; j < lfsu_do.child(o).size(); j++)
             for (std::size_t k = 0; k < lfsu_di.child(i).size(); k++)
-              accumulate_oi(comp_o,j,comp_i,k, - factor * phiu_o[j] * phiu_i[k]);
+              accumulate_oi(
+                comp_o, j, comp_i, k, -factor * phiu_o[j] * phiu_i[k]);
         }
       }
     }
@@ -699,10 +722,7 @@ public:
 
       const auto& sub_config = config.sub(compartments[i]);
       _local_operator[i] = std::make_shared<BaseLOP>(
-        sub_grid_view,
-        sub_config,
-        finite_element,
-        id_operator);
+        sub_grid_view, sub_config, finite_element, id_operator);
     }
   }
 

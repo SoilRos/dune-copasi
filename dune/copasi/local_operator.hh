@@ -339,10 +339,9 @@ public:
         for (std::size_t i = 0; i < _basis_size; i++) // test func. loop
         {
           typename R::value_type rhs = -reaction[k] * _phihat[q][i];
-          for (std::size_t d = 0; d < dim; d++)// rows of grad
+          for (std::size_t d = 0; d < dim; d++) // rows of grad
             rhs += diffusion[k] * grad[i][d] * graduh[d];
           accumulate(k, i, rhs * factor);
-
         }
       }
     }
@@ -386,13 +385,12 @@ public:
 
     DynamicVector<RF> u(_components);
     DynamicVector<RF> diffusion(_lfs_components.size());
-    DynamicVector<RF> jacobian(_lfs_components.size() *
-                                _lfs_components.size());
+    DynamicVector<RF> jacobian(_lfs_components.size() * _lfs_components.size());
     DynamicVector<FieldVector<RF, dim>> grad(_basis_size);
 
     // loop over quadrature points
     for (std::size_t q = 0; q < _rule.size(); q++) {
-      
+
       const auto& position = _rule[q].position();
 
       std::fill(u.begin(), u.end(), 0.);
@@ -435,19 +433,18 @@ public:
       };
 
       // compute grad^T * grad
-      for (std::size_t k = 0; k < _lfs_components.size(); k++)
-      {
-        for (std::size_t l = 0; l < _lfs_components.size(); l++) 
-        {
-          if (not do_link(k,l))
+      for (std::size_t k = 0; k < _lfs_components.size(); k++) {
+        for (std::size_t l = 0; l < _lfs_components.size(); l++) {
+          if (not do_link(k, l))
             continue;
           const auto j = _lfs_components.size() * k + l;
-          for (std::size_t m = 0; m < _basis_size; m++)
-          {
+          for (std::size_t m = 0; m < _basis_size; m++) {
             for (std::size_t n = 0; n < _basis_size; n++) {
-              typename M::value_type jac = - jacobian[j] * _phihat[q][m] * _phihat[q][n];
-              if (l==k) for (std::size_t d = 0; d < dim; d++)
-                jac += diffusion[k] * grad[m][d] * grad[n][d];
+              typename M::value_type jac =
+                -jacobian[j] * _phihat[q][m] * _phihat[q][n];
+              if (l == k)
+                for (std::size_t d = 0; d < dim; d++)
+                  jac += diffusion[k] * grad[m][d] * grad[n][d];
               accumulate(k, m, l, n, jac * factor);
             }
           }
@@ -651,8 +648,7 @@ public:
                           const std::size_t& dof_j,
                           const auto& value) {
       mat.accumulate(
-        lfsv.child(component_i), dof_i, lfsu.child(component_j), dof_j,
-        value);
+        lfsv.child(component_i), dof_i, lfsu.child(component_j), dof_j, value);
     };
 
     // get geometry
