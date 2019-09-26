@@ -130,18 +130,14 @@ public:
       for (std::size_t comp_i = 0; comp_i < _component_name[domain_i].size();
            comp_i++) {
         for (std::size_t domain_o = 0; domain_o < _size; ++domain_o) {
+          // notice that _component_offset is agnostic on which operator is given component
           for (std::size_t comp_o = 0;
                comp_o < _component_name[domain_o].size();
                comp_o++) {
             if (_component_name[domain_i][comp_i] ==
                 _component_name[domain_o][comp_o]) {
-              int op_i = config.template get<int>(compartments[domain_i] + ".operator." + _component_name[domain_i][comp_i]);
-              int op_o = config.template get<int>(compartments[domain_o] + ".operator." + _component_name[domain_o][comp_o]);
-              // only assign offset when they are in the same operator, otherwise update is managed by coefficient manager
-              if (op_i == op_o) {
                 std::array<std::size_t, 3> key_i{ domain_i, domain_o, comp_i };
                 _component_offset.insert(std::make_pair(key_i, comp_o));
-              }
             }
           }
         }
@@ -573,7 +569,7 @@ public:
           const std::size_t comp_o = it->second;
           const auto& lfs_comp_o = _local_operator[domain_o]->_lfs_components;
           auto o_it = std::find(lfs_comp_o.begin(), lfs_comp_o.end(), comp_o);
-          assert(o_it!=lfs_comp_o.end());
+          if (o_it==lfs_comp_o.end()) continue;
           std::size_t o = std::distance(lfs_comp_o.begin(),o_it);
 
           // compute inside-outside jacobian
@@ -603,7 +599,7 @@ public:
           const std::size_t comp_i = it->second;
           const auto& lfs_comp_i = _local_operator[domain_i]->_lfs_components;
           auto i_it = std::find(lfs_comp_i.begin(), lfs_comp_i.end(), comp_i);
-          assert(i_it!=lfs_comp_i.end());
+          if (i_it==lfs_comp_i.end()) continue;
           std::size_t i = std::distance(lfs_comp_i.begin(),i_it);
 
           // compute inside-outside jacobian
@@ -706,7 +702,7 @@ public:
         sub_grid_view,
         sub_config,
         finite_element,
-        id_operator); // TODO: what then the id operator is different?
+        id_operator);
     }
   }
 
