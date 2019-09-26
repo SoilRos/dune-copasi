@@ -18,6 +18,8 @@
 
 #include <dune/copasi/pdelab_expression_adapter.hh>
 
+#include <set>
+
 namespace Dune::Copasi {
 
 template<class GV,
