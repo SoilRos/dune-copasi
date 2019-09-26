@@ -44,4 +44,4 @@ if (dune-testtools_FOUND)
 
 endif()
 
-add_custom_target(build_system_tests DEPENDS test_jacobian)
+add_custom_target(build_system_tests DEPENDS dune_copasi test_jacobian)

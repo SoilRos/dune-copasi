@@ -6,7 +6,6 @@
 #include <dune/copasi/model_diffusion_reaction.hh>
 #include <dune/copasi/model_diffusion_reaction.cc>
 #include <dune/copasi/model_multidomain_diffusion_reaction.hh>
-#include <dune/copasi/model_multidomain_diffusion_reaction.cc>
 #include <dune/copasi/enum.hh>
 
 #include <dune/grid/multidomaingrid.hh>
