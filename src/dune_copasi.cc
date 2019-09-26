@@ -6,7 +6,6 @@
 #include <dune/copasi/model_diffusion_reaction.hh>
 #include <dune/copasi/model_diffusion_reaction.cc>
 #include <dune/copasi/model_multidomain_diffusion_reaction.hh>
-#include <dune/copasi/model_multidomain_diffusion_reaction.cc>
 #include <dune/copasi/enum.hh>
 
 #include <dune/grid/multidomaingrid.hh>
@@ -65,8 +64,6 @@ int main(int argc, char** argv)
 
     auto& model_config = config.sub("model");
     int order = model_config.get<int>("order");
-    std::string ordering = model_config.get<std::string>("ordering_type");
-    std::string jacobian = model_config.get<std::string>("jacobian_type");
     
     if (order == 1)
     {
