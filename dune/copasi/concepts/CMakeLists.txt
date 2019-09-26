@@ -1,4 +1,4 @@
 install(FILES   grid.hh
                 pdelab.hh 
                 typetree.hh
-        DESTINATION "include/dune/copasi/concepts")
+        DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/dune/copasi/concepts")
