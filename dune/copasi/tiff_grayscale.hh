@@ -91,7 +91,8 @@ public:
     TIFFClose(_tiff_file);
   }
 
-  TIFFGrayscaleRow operator[](T row) const
+  // if rows are read concurrently, this object has to be copied
+  const TIFFGrayscaleRow& operator[](T row) const
   {
     assert((short)row < _row_size);
     return cache(row);
@@ -100,13 +101,21 @@ public:
   template<class DF>
   double operator()(const DF& x, const DF& y)
   {
-    // here we assume TIFFTAG_RESOLUTIONUNIT has same units as grid.
+    // here we assume TIFFTAG_RESOLUTIONUNIT has same units as the grid.
     // since we never check grid units, we also do not check tiff units
-    assert(FloatCmp::ge((float)x, _x_off));
-    assert(FloatCmp::ge((float)y, _y_off));
+
+    // return 0 if not in the domain
+    if (FloatCmp::lt((float)x, _x_off) or FloatCmp::lt((float)y, _y_off)) 
+      return 0.;
+
     const T i = _x_res * (_x_off + x);
     const T j = _row_size - _y_res * (_y_off + y) - 1;
-    return (*this)[j][i];
+
+    // return 0 if not in the domain
+    if (i>=cols() or j>=rows()) 
+      return 0.;
+    else
+      return (*this)[j][i];
   }
 
   std::size_t size() const { return cols(); }
@@ -128,7 +137,7 @@ const TIFFGrayscaleRow& cache(T row) const
   else
     _row_cache.emplace_back(_tiff_file, row, _col_size);
   
-  if (_row_cache.size() >= 5)
+  if (_row_cache.size() >= 8)
     _row_cache.pop_front();
 
   return *(_row_cache.rbegin());

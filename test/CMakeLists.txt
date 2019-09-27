@@ -37,6 +37,11 @@ if (dune-testtools_FOUND)
     SCRIPT          dune_vtkcompare.py
     INIFILE         test_exp.mini)
 
+    add_system_test_per_target(
+      TARGET          dune_copasi
+      SCRIPT          dune_vtkcompare.py
+      INIFILE         test_tiff.mini)
+
   dune_add_system_test(
     SOURCE          test_jacobian.cc
     BASENAME        dune_copasi_test_jacobian
