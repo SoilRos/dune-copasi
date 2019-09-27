@@ -20,15 +20,10 @@ class TIFFGrayscale
 
   struct TIFFGrayscaleRow
   {
-    TIFFGrayscaleRow(const T* const tiff_buffer, const T& row, const short& col_size)
-      : _tiff_buffer(tiff_buffer)
-      , _row(row)
-      , _col_size(col_size)
-    {}
-
-    TIFFGrayscaleRow(TIFF* const tiff_file, const T& row, const short& col_size)
+    TIFFGrayscaleRow(TIFF* const tiff_file, const T& row, const short& col_size, const bool& zero)
       : _row(row)
       , _col_size(col_size)
+      , _zero(zero)
     {
       T* raw_buffer = (T*)_TIFFmalloc(TIFFScanlineSize(tiff_file));
       auto deleter = [](auto& ptr){_TIFFfree(ptr);};
@@ -39,7 +34,10 @@ class TIFFGrayscale
     double operator[](const T& col) const
     {
       assert((short)col < _col_size);
-      return (double)*(_tiff_buffer.get() + col) / std::numeric_limits<T>::max();
+      const T max = std::numeric_limits<T>::max();
+      T val = *(_tiff_buffer.get() + col);
+      val = _zero ? val : max-val; 
+      return (double)val/max;
     }
 
     std::size_t size() const { return static_cast<std::size_t>(_col_size); }
@@ -48,7 +46,8 @@ class TIFFGrayscale
   private:
     std::shared_ptr<T> _tiff_buffer;
     const T _row;
-    const short& _col_size;
+    const short _col_size;
+    const bool _zero;
   };
 
 public:
@@ -60,10 +59,11 @@ public:
 
     short photometric;
     TIFFGetField(_tiff_file, TIFFTAG_PHOTOMETRIC, &photometric);
-    if ((photometric != PHOTOMETRIC_MINISBLACK) and
+    if ((photometric != PHOTOMETRIC_MINISWHITE) and
         (photometric != PHOTOMETRIC_MINISBLACK))
       DUNE_THROW(IOError,
                  "TIFF file '" << filename << "' must be in grayscale.");
+    _zero = (bool)photometric;
 
     short bits_per_sample;
     TIFFGetField(_tiff_file, TIFFTAG_BITSPERSAMPLE, &bits_per_sample);
@@ -106,14 +106,14 @@ public:
 
     // return 0 if not in the domain
     if (FloatCmp::lt((float)x, _x_off) or FloatCmp::lt((float)y, _y_off)) 
-      return 0.;
+      return _zero;
 
     const T i = _x_res * (_x_off + x);
     const T j = _row_size - _y_res * (_y_off + y) - 1;
 
     // return 0 if not in the domain
     if (i>=cols() or j>=rows()) 
-      return 0.;
+      return 0;
     else
       return (*this)[j][i];
   }
@@ -135,7 +135,7 @@ const TIFFGrayscaleRow& cache(T row) const
   if (it != _row_cache.rend())
     return *it;
   else
-    _row_cache.emplace_back(_tiff_file, row, _col_size);
+    _row_cache.emplace_back(_tiff_file, row, _col_size, _zero);
   
   if (_row_cache.size() >= 8)
     _row_cache.pop_front();
@@ -150,6 +150,7 @@ private:
   short _col_size;
   float _x_res, _x_off;
   float _y_res, _y_off;
+  bool _zero;
 };
 
 } // namespace Dune::Copasi
