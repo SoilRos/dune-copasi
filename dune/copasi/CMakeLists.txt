@@ -18,6 +18,7 @@ install(FILES   coefficient_mapper.hh
                 model_state.hh
                 multidomain_entity_transformation.hh
                 multidomain_local_finite_element_map.hh
+                muparser_data_handler.hh
                 pdelab_callable_adapter.hh
                 pdelab_expression_adapter.hh
                 tiff_grayscale.hh
