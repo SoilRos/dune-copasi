@@ -2,6 +2,7 @@ install(FILES compositegridfunctionspace.hh
               dunefunctionsgridfunctionspace.hh
               dunefunctionslfsindexcache.hh
               dunefunctionslocalfunctionspace.hh
+              dynamicpowergridfunctionspace.hh
               datahandleprovider.hh
               entityindexcache.hh
               genericdatahandle.hh
