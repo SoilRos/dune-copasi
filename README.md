@@ -18,7 +18,7 @@ This project is made under the umbrella of the
 [*Distributed and Unified Numerics Environment* `DUNE`](https://www.dune-project.org/) and the
 [*Biochemical System Simulator* `COPASI`](http://copasi.org/). 
 Altought the rationale of the design is always driven by biochemical process (e.g. cell biology), 
-this software is not limited to this scope and can be used for other processes involving reaction-diffusion system.
+this software is not limited to this scope and can be used for other processes involving reaction-diffusion systems.
 
 ## Graphical User Interface for SMBL files
 
@@ -39,7 +39,7 @@ This requires that you have installed the following packages before the actual i
 | [libTIFF](http://www.libtiff.org/) | 3.6.1 |
 | [muParser](https://beltoforion.de/article.php?a=muparser) | 2.2.5 |
 | [dune-common](https://gitlab.dune-project.org/santiago.ospina/dune-common) | support/dune-copasi | https://gitlab.dune-project.org/santiago.ospina/dune-common
-| [dune-logging](https://gitlab.dune-project.org/staging/dune-logging) | master | https://gitlab.dune-project.org/staging/dune-logging
+| [dune-logging](https://gitlab.dune-project.org/staging/dune-logging) | master (recursive) | https://gitlab.dune-project.org/staging/dune-logging
 | [dune-geometry](https://gitlab.dune-project.org/core/dune-geometry) | master | https://gitlab.dune-project.org/core/dune-geometry
 | [dune-grid](https://gitlab.dune-project.org/core/dune-grid) | master | https://gitlab.dune-project.org/core/dune-grid
 | [dune-uggrid](https://gitlab.dune-project.org/staging/dune-uggrid) | master | https://gitlab.dune-project.org/staging/dune-uggrid
@@ -70,18 +70,18 @@ Now, the dune modules (including `dune-copasi`) can be all checkout in a same fo
 mkdir ~/dune-modules && cd ~/dune-modules
 
 # fetch dependencies & dune-copasi in ~/dune-modules folder
-git clone https://gitlab.dune-project.org/santiago.ospina/dune-common
-git clone https://gitlab.dune-project.org/staging/dune-logging
-git clone https://gitlab.dune-project.org/core/dune-geometry
-git clone https://gitlab.dune-project.org/core/dune-grid
-git clone https://gitlab.dune-project.org/staging/dune-uggrid
-git clone https://gitlab.dune-project.org/core/dune-istl
-git clone https://gitlab.dune-project.org/core/dune-localfunctions
-git clone https://gitlab.dune-project.org/staging/dune-functions
-git clone https://gitlab.dune-project.org/santiago.ospina/dune-typetree
-git clone https://gitlab.dune-project.org/santiago.ospina/dune-pdelab
-git clone https://gitlab.dune-project.org/santiago.ospina/dune-multidomaingrid
-git clone https://gitlab.dune-project.org/copasi/dune-copasi
+git clone -b support/dune-copasi https://gitlab.dune-project.org/santiago.ospina/dune-common
+git clone -b master --recursive https://gitlab.dune-project.org/staging/dune-logging
+git clone -b master https://gitlab.dune-project.org/core/dune-geometry
+git clone -b master https://gitlab.dune-project.org/core/dune-grid
+git clone -b master https://gitlab.dune-project.org/staging/dune-uggrid
+git clone -b master https://gitlab.dune-project.org/core/dune-istl
+git clone -b master https://gitlab.dune-project.org/core/dune-localfunctions
+git clone -b master https://gitlab.dune-project.org/staging/dune-functions
+git clone -b support/dune-copasi https://gitlab.dune-project.org/santiago.ospina/dune-typetree
+git clone -b support/dune-copasi https://gitlab.dune-project.org/santiago.ospina/dune-pdelab
+git clone -b support/dune-copasi https://gitlab.dune-project.org/santiago.ospina/dune-multidomaingrid
+git clone -b master https://gitlab.dune-project.org/copasi/dune-copasi
 
 # configure and build dune modules
 ./dune-common/bin/dunecontrol make all
@@ -89,8 +89,8 @@ git clone https://gitlab.dune-project.org/copasi/dune-copasi
 # install dune-copasi (this operation may requiere sudo)
 ./dune-common/bin/dunecontrol --only=dune-copasi bexec make install
 
-# if you do not want to install dune-copasi system wide, you can set
-# the CMAKE_INSTALL_PREFIX  to a non restricted folder
+# if you do not want to install dune-copasi system-wide, you can set
+# the CMAKE_INSTALL_PREFIX to a non restricted folder
 # see https://cmake.org/cmake/help/latest/variable/CMAKE_INSTALL_PREFIX.html
 
 # remove source and build files
@@ -102,7 +102,7 @@ the [dune-project web page](https://www.dune-project.org/doc/installation/)
 
 ## Usage 
 
-If you installed `dune-copasi` system wide, you should be able to call the program
+If you installed `dune-copasi` system-wide, you should be able to call the program
 `dune_copasi` from your command line accompained with a configuration file.
 
 ```bash
