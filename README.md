@@ -87,8 +87,7 @@ git clone https://gitlab.dune-project.org/copasi/dune-copasi
 ./dune-common/bin/dunecontrol make all
 
 # install dune-copasi (this operation may requiere sudo)
-./dune-common/bin/dunecontrol --only=dune-copasi bexec make install the 
-[dune-project web page](https://www.dune-project.org/doc/installation/).
+./dune-common/bin/dunecontrol --only=dune-copasi bexec make install
 
 # if you do not want to install dune-copasi system wide, you can set
 # the CMAKE_INSTALL_PREFIX  to a non restricted folder
