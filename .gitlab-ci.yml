@@ -129,11 +129,9 @@ pages:
   <<: *general_definitions
   stage: deploy
   script:
-  - pwd
-  - ls
-  - cd build-cmake
-  - make doc
-  - mv doc/doxygen/html/ public/
+  - cd ..
+  - bash dune-copasi/.ci/deploy.sh
+  - mv dune-copasi/build-cmake/doc/doxygen/html/ public/
   artifacts:
     paths:
     - public
