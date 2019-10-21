@@ -71,7 +71,7 @@ public:
    * @brief      Returns the number of shape functions for this local finite
    *             element
    *
-   * @return     The number of shape functions 
+   * @return     The number of shape functions
    */
   unsigned int size() const { return _power_size * _basis.size(); }
 
@@ -110,7 +110,8 @@ public:
    *
    * @param[in]  order  The order
    * @param[in]  in     The local coordinates
-   * @param      out    The value of the partial derivate for each shape function
+   * @param      out    The value of the partial derivate for each shape
+   * function
    *
    * @tparam     dim    The grid entity dimension
    */
@@ -131,8 +132,6 @@ public:
   unsigned int order() const { return _basis.order(); }
 
 private:
-
-
   /**
    * @brief      Helper class to polulate results for interface functions
    *

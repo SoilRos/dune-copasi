@@ -1,9 +1,9 @@
 #ifndef DUNE_COPASI_LOCAL_OPERATOR_DIFFUSION_REACTION_HH
 #define DUNE_COPASI_LOCAL_OPERATOR_DIFFUSION_REACTION_HH
 
-#include <dune/copasi/common/pdelab_expression_adapter.hh>
 #include <dune/copasi/common/coefficient_mapper.hh>
 #include <dune/copasi/common/enum.hh>
+#include <dune/copasi/common/pdelab_expression_adapter.hh>
 
 #include <dune/pdelab/common/quadraturerules.hh>
 #include <dune/pdelab/localoperator/flags.hh>
@@ -139,7 +139,7 @@ public:
                                  std::size_t id_operator)
     : _basis_size(finite_element.localBasis().size())
     , _components(config.sub("reaction").getValueKeys().size())
-    , _rule(QuadratureRules<RF, dim>::rule(finite_element.type(),3))
+    , _rule(QuadratureRules<RF, dim>::rule(finite_element.type(), 3))
     , _diffusion_gf(_components)
     , _reaction_gf(_components)
     , _jacobian_gf(_components * _components)
@@ -626,9 +626,7 @@ public:
   {
     _jacobian_apply_volume(eg, lfsu, x, x, lfsv, r);
   }
-
 };
-
 
 /**
  * @brief      This class describes a PDELab local operator for temporal part
@@ -728,7 +726,7 @@ public:
     std::size_t id_operator)
     : _basis_size(finite_element.size())
     , _components(config.sub("reaction").getValueKeys().size())
-    , _rule(QuadratureRules<RF, dim>::rule(finite_element.type(),3))
+    , _rule(QuadratureRules<RF, dim>::rule(finite_element.type(), 3))
     , _logger(Logging::Logging::componentLogger(config, "model"))
   {
     auto& config_operator = config.sub("operator");
@@ -873,7 +871,6 @@ public:
     }
   }
 
-
   /**
    * @brief      The jacobian volume integral for matrix free operations
    * @details    This only switches between the actual implementation (in
@@ -913,7 +910,6 @@ public:
     }
     alpha_volume(eg, lfsu, z, lfsv, r);
   }
-
 
   /**
    * @brief      The jacobian volume integral for matrix free operations (linear

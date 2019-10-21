@@ -1,8 +1,8 @@
 #ifndef DUNE_COPASI_LOCAL_OPERATOR_MULTIDOMAIN_DIFFUSION_REACTION_HH
 #define DUNE_COPASI_LOCAL_OPERATOR_MULTIDOMAIN_DIFFUSION_REACTION_HH
 
-#include <dune/copasi/concepts/grid.hh>
 #include <dune/copasi/common/enum.hh>
+#include <dune/copasi/concepts/grid.hh>
 #include <dune/copasi/model/local_operator.hh>
 
 #include <dune/pdelab/localoperator/numericaljacobian.hh>
@@ -346,7 +346,7 @@ public:
       }
     }
   }
-  
+
   /**
    * @copydoc LocalOperatorDiffusionReaction::jacobian_volume
    * @details    This particular operator does a jacobian volume for the
@@ -393,7 +393,6 @@ public:
       }
     }
   }
-
 
   /**
    * @brief      The skeleton integral

@@ -6,9 +6,9 @@
 
 #include <tiffio.h>
 
-#include <string>
-#include <queue>
 #include <memory>
+#include <queue>
+#include <string>
 
 namespace Dune::Copasi {
 
@@ -40,13 +40,16 @@ class TIFFGrayscale
      * @param[in]  col_size   The column size
      * @param[in]  zero       Zero based grayscale?
      */
-    TIFFGrayscaleRow(TIFF* const tiff_file, const T& row, const short& col_size, const bool& zero)
+    TIFFGrayscaleRow(TIFF* const tiff_file,
+                     const T& row,
+                     const short& col_size,
+                     const bool& zero)
       : _row(row)
       , _col_size(col_size)
       , _zero(zero)
     {
       T* raw_buffer = (T*)_TIFFmalloc(TIFFScanlineSize(tiff_file));
-      auto deleter = [](auto& ptr){_TIFFfree(ptr);};
+      auto deleter = [](auto& ptr) { _TIFFfree(ptr); };
       _tiff_buffer = std::shared_ptr<T>(raw_buffer, deleter);
       TIFFReadScanline(tiff_file, _tiff_buffer.get(), _row);
     }
@@ -66,8 +69,8 @@ class TIFFGrayscale
       assert((short)col < _col_size);
       const T max = std::numeric_limits<T>::max();
       T val = *(_tiff_buffer.get() + col);
-      val = _zero ? val : max-val; 
-      return (double)val/max;
+      val = _zero ? val : max - val;
+      return (double)val / max;
     }
 
     /**
@@ -92,7 +95,6 @@ class TIFFGrayscale
   };
 
 public:
-
   /**
    * @brief      Constructs a new instance.
    *
@@ -138,12 +140,8 @@ public:
   /**
    * @brief      Destroys the object.
    */
-  ~TIFFGrayscale()
-  {
-    TIFFClose(_tiff_file);
-  }
+  ~TIFFGrayscale() { TIFFClose(_tiff_file); }
 
-  
   /**
    * @brief      Array indexer row operator.
    * @warning    If rows are read concurrently, this object has to be copied
@@ -176,65 +174,64 @@ public:
   double operator()(const DF& x, const DF& y)
   {
     // return 0 if not in the domain
-    if (FloatCmp::lt((float)x, _x_off) or FloatCmp::lt((float)y, _y_off)) 
+    if (FloatCmp::lt((float)x, _x_off) or FloatCmp::lt((float)y, _y_off))
       return 0;
 
     const T i = _x_res * (_x_off + x);
     const T j = _row_size - _y_res * (_y_off + y) - 1;
 
     // return 0 if not in the domain
-    if (i>=cols() or j>=rows()) 
+    if (i >= cols() or j >= rows())
       return 0;
     else
       return (*this)[j][i];
   }
 
-    /**
-     * @brief      The size of rows for this file
-     *
-     * @return     Number of rows in this file
-     */
+  /**
+   * @brief      The size of rows for this file
+   *
+   * @return     Number of rows in this file
+   */
   std::size_t size() const { return rows(); }
 
-      /**
-     * @brief      The size of rows for this file
-     *
-     * @return     Number of rows in this file
-     */
+  /**
+   * @brief      The size of rows for this file
+   *
+   * @return     Number of rows in this file
+   */
   std::size_t rows() const { return static_cast<std::size_t>(_row_size); }
 
-    /**
-     * @brief      The size of cols for this file
-     *
-     * @return     Number of cols in this file
-     */
+  /**
+   * @brief      The size of cols for this file
+   *
+   * @return     Number of cols in this file
+   */
   std::size_t cols() const { return static_cast<std::size_t>(_col_size); }
 
 private:
+  /**
+   * @brief      Cache rows
+   *
+   * @param[in]  row   The row to be cached
+   *
+   * @return     The cached row
+   */
+  const TIFFGrayscaleRow& cache(T row) const
+  {
+    auto it = _row_cache.rbegin();
+    while ((it != _row_cache.rend()) and (it->row() != row))
+      it++;
 
-/**
- * @brief      Cache rows
- *
- * @param[in]  row   The row to be cached
- *
- * @return     The cached row
- */
-const TIFFGrayscaleRow& cache(T row) const
-{
-  auto it = _row_cache.rbegin();
-  while ((it != _row_cache.rend()) and (it->row() != row))
-    it++;
-  
-  if (it != _row_cache.rend())
-    return *it;
-  else
-    _row_cache.emplace_back(_tiff_file, row, _col_size, _zero);
-  
-  if (_row_cache.size() >= 8)
-    _row_cache.pop_front();
+    if (it != _row_cache.rend())
+      return *it;
+    else
+      _row_cache.emplace_back(_tiff_file, row, _col_size, _zero);
 
-  return *(_row_cache.rbegin());
-}
+    if (_row_cache.size() >= 8)
+      _row_cache.pop_front();
+
+    return *(_row_cache.rbegin());
+  }
 
 private:
   TIFF* _tiff_file;

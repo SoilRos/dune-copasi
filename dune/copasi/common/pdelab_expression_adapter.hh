@@ -40,8 +40,10 @@ public:
    *
    * @param[in]  grid_view          The grid view
    * @param[in]  equation           The math expression
-   * @param[in]  do_compile_parser  Bool to compile parser at object construction
-   * @param[in]  other_variables    Extra varialbes names to be available in the expression
+   * @param[in]  do_compile_parser  Bool to compile parser at object
+   * construction
+   * @param[in]  other_variables    Extra varialbes names to be available in the
+   * expression
    */
   ExpressionToGridFunctionAdapter(const GV& grid_view,
                                   const std::string& equation,
@@ -95,7 +97,6 @@ public:
    * @return     The grid view.
    */
   inline const GV& getGridView() const { return _gv; }
-
 
   /**
    * @brief      Evaluates extended function on a element
@@ -166,7 +167,6 @@ public:
   void set_time(double t) { _time = t; }
 
 private:
-
   /**
    * @brief      Output information on the parser error and throw DUNE exception
    *

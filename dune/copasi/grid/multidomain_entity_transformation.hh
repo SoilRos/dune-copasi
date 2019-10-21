@@ -10,7 +10,8 @@ namespace Dune::Copasi {
  * @details    This class transform an entity of a multidomain grid to a
  *             subdomain grid entity. Equivalent to the lambda function:
  * @code{.cpp}
- * auto entity_transform = [&](auto e){return _grid->multiDomainEntity(entity);};
+ * auto entity_transform = [&](auto e){return
+ * _grid->multiDomainEntity(entity);};
  * @endcode
  *
  * @tparam     Grid  The grid

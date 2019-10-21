@@ -1,13 +1,13 @@
 #ifndef DUNE_COPASI_MODEL_DIFFUSION_REACTION_HH
 #define DUNE_COPASI_MODEL_DIFFUSION_REACTION_HH
 
-#include <dune/copasi/concepts/grid.hh>
-#include <dune/copasi/common/enum.hh>
 #include <dune/copasi/common/coefficient_mapper.hh>
-#include <dune/copasi/model/local_operator.hh>
-#include <dune/copasi/model/base.hh>
-#include <dune/copasi/model/state.hh>
+#include <dune/copasi/common/enum.hh>
+#include <dune/copasi/concepts/grid.hh>
 #include <dune/copasi/finite_element/multidomain_local_finite_element_map.hh>
+#include <dune/copasi/model/base.hh>
+#include <dune/copasi/model/local_operator.hh>
+#include <dune/copasi/model/state.hh>
 
 #include <dune/pdelab/backend/istl.hh>
 #include <dune/pdelab/constraints/conforming.hh>

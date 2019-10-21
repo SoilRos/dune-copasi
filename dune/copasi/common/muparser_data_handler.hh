@@ -12,8 +12,6 @@
 
 namespace Dune::Copasi {
 
-// 
-
 /**
  * @brief      MuParser data handler.
  * @details    MuParser only allows to define functions if they are defined
@@ -85,7 +83,8 @@ struct MuParserDataHandler
   template<std::size_t max_functions = 20>
   void set_functions(mu::Parser& parser)
   {
-    auto indices = Dune::range(std::integral_constant<std::size_t, max_functions>{});
+    auto indices =
+      Dune::range(std::integral_constant<std::size_t, max_functions>{});
     Dune::Hybrid::forEach(indices, [&](auto i) {
       if (i < _functions.size())
         parser.DefineFun(_names[i], function_wrapper<i>);

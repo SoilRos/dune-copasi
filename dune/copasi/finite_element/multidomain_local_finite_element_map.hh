@@ -118,17 +118,15 @@ public:
                               .contains(sub_domain);
         if (not in_grid_view)
           return _fe_null;
-      } 
-      else
-      {
-        DUNE_THROW(NotImplemented,"Method not implemented for subdomain entites");
+      } else {
+        DUNE_THROW(NotImplemented,
+                   "Method not implemented for subdomain entites");
       }
     }
     auto base_fe = _fem.find(e);
 
     // cache the last used base finite element
-    if (_base_fe_cache != &base_fe)
-    {
+    if (_base_fe_cache != &base_fe) {
       _base_fe_cache = &base_fe;
       if (_fe_cache != NULL)
         delete _fe_cache;

@@ -1,13 +1,13 @@
 #ifndef DUNE_COPASI_MODEL_MULTIDOMAIN_DIFFUSION_REACTION_HH
 #define DUNE_COPASI_MODEL_MULTIDOMAIN_DIFFUSION_REACTION_HH
 
-#include <dune/copasi/concepts/grid.hh>
 #include <dune/copasi/common/enum.hh>
-#include <dune/copasi/model/multidomain_local_operator.hh>
+#include <dune/copasi/concepts/grid.hh>
+#include <dune/copasi/grid/multidomain_entity_transformation.hh>
 #include <dune/copasi/model/base.hh>
 #include <dune/copasi/model/diffusion_reaction.cc>
 #include <dune/copasi/model/diffusion_reaction.hh>
-#include <dune/copasi/grid/multidomain_entity_transformation.hh>
+#include <dune/copasi/model/multidomain_local_operator.hh>
 
 #include <dune/pdelab/backend/istl.hh>
 #include <dune/pdelab/backend/istl/novlpistlsolverbackend.hh>
@@ -19,7 +19,6 @@
 #include <memory>
 
 namespace Dune::Copasi {
-
 
 /**
  * @brief      Traits for diffusion reaction models in multigrid domains
@@ -40,7 +39,6 @@ struct ModelMultiDomainDiffusionReactionTraits
   static constexpr int order = FEMorder;
   static constexpr JacobianMethod jacobian_method = JM;
 };
-
 
 /**
  * @brief      Class for diffusion-reaction models in multigrid domains.
@@ -178,7 +176,6 @@ class ModelMultiDomainDiffusionReaction : public ModelBase
     DGFTreeLeafFunction<ComponentLFS, DataHandler, SubDomainGridView>;
 
 public:
-
   /**
    * @brief      Constructs a new instance.
    *

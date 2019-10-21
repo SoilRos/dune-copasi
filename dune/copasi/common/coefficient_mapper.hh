@@ -178,14 +178,14 @@ struct ModelCoefficientMapperBase
   }
 };
 
-  /**
-   * @brief      Constructs the model coefficient mapper
-   * @details    This coefficient mapper is designed to one domain local
-   *             operators. That is, when the PDELab local function tree only
-   *             has depth equal to 1
-   *
-   * @tparam     ModelState  The model state type
-   */
+/**
+ * @brief      Constructs the model coefficient mapper
+ * @details    This coefficient mapper is designed to one domain local
+ *             operators. That is, when the PDELab local function tree only
+ *             has depth equal to 1
+ *
+ * @tparam     ModelState  The model state type
+ */
 template<class ModelState>
 struct ModelCoefficientMapper : public ModelCoefficientMapperBase<ModelState>
 {
@@ -256,7 +256,7 @@ struct ModelCoefficientMapper : public ModelCoefficientMapperBase<ModelState>
     for (std::size_t i = 0; i < map_op.size(); i++)
       _comp_mapper[i] =
         std::array<std::size_t, 2>{ map_op[i], comp_child[map_op[i]]++ };
-  }\
+  }
 
   /**
    * @brief      Evaluates the coefficents for a give component and a degree of
@@ -288,14 +288,14 @@ struct ModelCoefficientMapper : public ModelCoefficientMapperBase<ModelState>
   }
 };
 
-  /**
-   * @brief      Constructs the coefficient mapper for multidomain models
-   * @details    This coefficient mapper is designed to multidomain domain local
-   *             operators. That is, when the PDELab local function tree has
-   *             depth equal to 2
-   *
-   * @tparam     ModelState  The model state type
-   */
+/**
+ * @brief      Constructs the coefficient mapper for multidomain models
+ * @details    This coefficient mapper is designed to multidomain domain local
+ *             operators. That is, when the PDELab local function tree has
+ *             depth equal to 2
+ *
+ * @tparam     ModelState  The model state type
+ */
 template<class ModelState>
 struct MultiDomainModelCoefficientMapper
   : public ModelCoefficientMapper<ModelState>
