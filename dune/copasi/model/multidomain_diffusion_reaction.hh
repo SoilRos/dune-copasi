@@ -2,12 +2,12 @@
 #define DUNE_COPASI_MODEL_MULTIDOMAIN_DIFFUSION_REACTION_HH
 
 #include <dune/copasi/concepts/grid.hh>
-#include <dune/copasi/enum.hh>
-#include <dune/copasi/local_operator_multidomain.hh>
-#include <dune/copasi/model_base.hh>
-#include <dune/copasi/model_diffusion_reaction.cc>
-#include <dune/copasi/model_diffusion_reaction.hh>
-#include <dune/copasi/multidomain_entity_transformation.hh>
+#include <dune/copasi/common/enum.hh>
+#include <dune/copasi/model/multidomain_local_operator.hh>
+#include <dune/copasi/model/base.hh>
+#include <dune/copasi/model/diffusion_reaction.cc>
+#include <dune/copasi/model/diffusion_reaction.hh>
+#include <dune/copasi/grid/multidomain_entity_transformation.hh>
 
 #include <dune/pdelab/backend/istl.hh>
 #include <dune/pdelab/backend/istl/novlpistlsolverbackend.hh>
