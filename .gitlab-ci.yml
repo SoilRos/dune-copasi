@@ -125,23 +125,6 @@ stages:
   only:
     - master
 
-pages:
-  <<: *debian_clang
-  <<: *general_definitions
-  stage: deploy
-  script:
-  - cd ..
-  - bash dune-copasi/.ci/deploy.sh
-  - mv dune-copasi/build-cmake/doc/doxygen/html/ public/
-  artifacts:
-    paths:
-    - public
-  dependencies:
-    - build:debian_clang
-  # only:
-  # - master
-
-
 # debian gcc
 setup:debian_gcc:
   <<: *debian_gcc
