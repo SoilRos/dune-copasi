@@ -28,6 +28,15 @@
 
 namespace Dune::Copasi {
 
+/**
+ * @brief      Traits for diffusion reaction models
+ *
+ * @tparam     G         Grid
+ * @tparam     GV        Grid View
+ * @tparam     FEMorder  Order of the finite element method
+ * @tparam     OT        PDELab ordering tag
+ * @tparam     JM        Jacobian method
+ */
 template<class G,
          class GV = typename G::Traits::LeafGridView,
          int FEMorder = 1,
@@ -44,9 +53,9 @@ struct ModelDiffusionReactionTraits
 
 /**
  * @brief      Class for diffusion-reaction models.
+ * @todo       Make this class work as stand-alone again
  *
- * @tparam     components  Number of components
- * @tparam     Param       Parameterization class
+ * @tparam     Traits  Class that define static policies on the model
  */
 template<class Traits>
 class ModelDiffusionReaction : public ModelBase
@@ -209,16 +218,16 @@ public:
   void step();
 
   /**
-   * @brief      Get the model state
+   * @brief      Get mutable model states
    *
-   * @return     Model state
+   * @return     Model states
    */
   std::map<std::size_t, State> states() { return _states; }
 
   /**
-   * @brief      Get the model state
+   * @brief      Get constat model states
    *
-   * @return     Model state
+   * @return     Constant model states
    */
   std::map<std::size_t, ConstState> const_states() const
   {
@@ -228,9 +237,9 @@ public:
   }
 
   /**
-   * @brief      Get the model state
+   * @brief      Get constat model states
    *
-   * @return     Model state
+   * @return     Constant model states
    */
   std::map<std::size_t, ConstState> states() const { return const_states(); }
 

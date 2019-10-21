@@ -57,7 +57,7 @@ int main(int argc, char** argv)
 
     auto grid_file = grid_config.get<std::string>("file");
 
-    auto [grid_ptr,host_grid_ptr] = Dune::Copasi::GmshReader<Grid>::read(grid_file,config);
+    auto [grid_ptr,host_grid_ptr] = Dune::Copasi::MultiDomainGmshReader<Grid>::read(grid_file,config);
 
     log.debug("Applying global refinement of level: {}"_fmt, level);
     grid_ptr->globalRefine(level);
