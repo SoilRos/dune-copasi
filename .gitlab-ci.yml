@@ -125,6 +125,18 @@ stages:
   only:
     - master
 
+pages:
+  script:
+  - make doc
+  - mv doc/doxygen/html/ public/
+  artifacts:
+    paths:
+    - public
+  dependencies:
+    - build:debian_clang
+  # only:
+  # - master
+
 
 # debian gcc
 setup:debian_gcc:
