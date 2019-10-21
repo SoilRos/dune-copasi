@@ -2,88 +2,110 @@
 [![Build Status](https://travis-ci.org/SoilRos/dune-copasi.svg?branch=master)](https://travis-ci.org/SoilRos/dune-copasi)
 [![Build status](https://ci.appveyor.com/api/projects/status/6605joy2w17qvca8/branch/master?svg=true)](https://ci.appveyor.com/project/SoilRos/dune-copasi/history)
 
-#### Dependencies
+# dune-copasi
+
+Solver for reaction-diffusion systems in multiple compartments
+
+ * Solve a reaction-diffusion system for each comartment
+ * Each compartment may have different system with different number of variables
+ * Neumann flux at the interface of compartments for variables with
+   the same name on the two compartments
+ * Easy to modify configuration file
+ * Solved using the finite element method
+ * Output in the VTK format
+
+This project is made under the umbrella of the 
+[*Distributed and Unified Numerics Environment* `DUNE`](https://www.dune-project.org/) and the
+[*Biochemical System Simulator* `COPASI`](http://copasi.org/). 
+Altought the rationale of the design is always driven by biochemical process (e.g. cell biology), 
+this software is not limited to this scope and can be used for other processes involving reaction-diffusion system.
+
+## Graphical User Interface for SMBL files
+
+For those working in bio-informatics there exist a grafical user interface for SMBL files!
+The GUI is able to convert non-spatial SBML models of bio-chemical reactions into 
+2d spatial models, and to simulate them with `dune-copasi`.
+
+https://github.com/lkeegan/spatial-model-editor
+
+## Installation
+
+This requires that you have installed the following packages before the actual installation of `dune-copasi`. Notice that
 
 | Software | Version/Branch | Comments |
 | ---------| -------------- | -------- |
-| muParser | - |
-| CMake | 3.10.2 |
+| [CMake](https://cmake.org/) | 3.1 |
 | C++ compiler | [C++17](https://en.wikipedia.org/wiki/List_of_compilers#C++_compilers) | 
-| [dune-common](https://gitlab.dune-project.org/santiago.ospina/dune-common) | support/dune-copasi
-| [dune-logging](https://gitlab.dune-project.org/staging/dune-logging) | master
-| [dune-geometry](https://gitlab.dune-project.org/core/dune-geometry) | master
-| [dune-grid](https://gitlab.dune-project.org/core/dune-grid) | master
-| [dune-uggrid](https://gitlab.dune-project.org/staging/dune-uggrid) | master
-| [dune-istl](https://gitlab.dune-project.org/core/dune-istl) | master
-| [dune-localfunctions](https://gitlab.dune-project.org/core/dune-localfunctions) | master
-| [dune-functions](https://gitlab.dune-project.org/staging/dune-functions) | master
-| [dune-typetree](https://gitlab.dune-project.org/santiago.ospina/dune-typetree) | support/dune-copasi
-| [dune-pdelab](https://gitlab.dune-project.org/santiago.ospina/dune-pdelab) | support/dune-copasi
-| [dune-multidomaingrid](https://gitlab.dune-project.org/santiago.ospina/dune-multidomaingrid) | support/dune-copasi
+| [libTIFF](http://www.libtiff.org/) | 3.6.1 |
+| [muParser](https://beltoforion.de/article.php?a=muparser) | 2.2.5 |
+| [dune-common](https://gitlab.dune-project.org/santiago.ospina/dune-common) | support/dune-copasi | https://gitlab.dune-project.org/santiago.ospina/dune-common
+| [dune-logging](https://gitlab.dune-project.org/staging/dune-logging) | master | https://gitlab.dune-project.org/staging/dune-logging
+| [dune-geometry](https://gitlab.dune-project.org/core/dune-geometry) | master | https://gitlab.dune-project.org/core/dune-geometry
+| [dune-grid](https://gitlab.dune-project.org/core/dune-grid) | master | https://gitlab.dune-project.org/core/dune-grid
+| [dune-uggrid](https://gitlab.dune-project.org/staging/dune-uggrid) | master | https://gitlab.dune-project.org/staging/dune-uggrid
+| [dune-istl](https://gitlab.dune-project.org/core/dune-istl) | master | https://gitlab.dune-project.org/core/dune-istl
+| [dune-localfunctions](https://gitlab.dune-project.org/core/dune-localfunctions) | master | https://gitlab.dune-project.org/core/dune-localfunctions
+| [dune-functions](https://gitlab.dune-project.org/staging/dune-functions) | master | https://gitlab.dune-project.org/staging/dune-functions
+| [dune-typetree](https://gitlab.dune-project.org/santiago.ospina/dune-typetree) | support/dune-copasi | https://gitlab.dune-project.org/santiago.ospina/dune-typetree
+| [dune-pdelab](https://gitlab.dune-project.org/santiago.ospina/dune-pdelab) | support/dune-copasi | https://gitlab.dune-project.org/santiago.ospina/dune-pdelab
+| [dune-multidomaingrid](https://gitlab.dune-project.org/santiago.ospina/dune-multidomaingrid) | support/dune-copasi | https://gitlab.dune-project.org/santiago.ospina/dune-multidomaingrid
 
-<!-- 
-Preparing the Sources
-=========================
-
-Additional to the software mentioned in README you'll need the
-following programs installed on your system:
-
-```
-  cmake >= 2.8.12
-```
-
-Getting started
----------------
-
-If these preliminaries are met, you should run
-
-```
-  dunecontrol all
-```
-
-which will find all installed dune modules as well as all dune modules
-(not installed) which sources reside in a subdirectory of the current
-directory. Note that if dune is not installed properly you will either
-have to add the directory where the `dunecontrol` script resides (probably
-`./dune-common/bin`) to your path or specify the relative path of the script.
-
-Most probably you'll have to provide additional information to `dunecontrol`
-(e. g. compilers, configure options) and/or make options.
-
-The most convenient way is to use options files in this case. The files
-define four variables:
-
-```
-CMAKE_FLAGS      flags passed to cmake (during configure)
-```
-
-An example options file might look like this:
+The first four can be obtained by your prefered package manager in unix-like operating systems. e.g.
 
 ```bash
-#use this options to configure and make if no other options are given
-CMAKE_FLAGS=" \
--DCMAKE_CXX_COMPILER=g++-5 \
--DCMAKE_CXX_FLAGS='-Wall -pedantic' \
--DCMAKE_INSTALL_PREFIX=/install/path" #Force g++-5 and set compiler flags
+# if you are in a debian/ubuntu OS
+apt update
+apt install cmake gcc g++ libtiff-dev libmuparser-dev git
+
+# if you are in a macOS
+xcode-select --install # Apple Command Line Tools
+brew update
+brew install cmake gcc libtiff muparser git
 ```
 
-If you save this information into example.opts you can pass the opts file to
-dunecontrol via the `--opts option`, e. g.
+Now, the dune modules (including `dune-copasi`) can be all checkout in a same folder and be installed in one go. 
 
 ```bash
-  dunecontrol --opts=example.opts all
+# prepare a folder to download and build dune modules
+mkdir ~/dune-modules && cd ~/dune-modules
+
+# fetch dependencies & dune-copasi in ~/dune-modules folder
+git clone https://gitlab.dune-project.org/santiago.ospina/dune-common
+git clone https://gitlab.dune-project.org/staging/dune-logging
+git clone https://gitlab.dune-project.org/core/dune-geometry
+git clone https://gitlab.dune-project.org/core/dune-grid
+git clone https://gitlab.dune-project.org/staging/dune-uggrid
+git clone https://gitlab.dune-project.org/core/dune-istl
+git clone https://gitlab.dune-project.org/core/dune-localfunctions
+git clone https://gitlab.dune-project.org/staging/dune-functions
+git clone https://gitlab.dune-project.org/santiago.ospina/dune-typetree
+git clone https://gitlab.dune-project.org/santiago.ospina/dune-pdelab
+git clone https://gitlab.dune-project.org/santiago.ospina/dune-multidomaingrid
+git clone https://gitlab.dune-project.org/copasi/dune-copasi
+
+# configure and build dune modules
+./dune-common/bin/dunecontrol make all
+
+# install dune-copasi (this operation may requiere sudo)
+./dune-common/bin/dunecontrol --only=dune-copasi bexec make install the 
+[dune-project web page](https://www.dune-project.org/doc/installation/).
+
+# if you do not want to install dune-copasi system wide, you can set
+# the CMAKE_INSTALL_PREFIX  to a non restricted folder
+# see https://cmake.org/cmake/help/latest/variable/CMAKE_INSTALL_PREFIX.htmlZ
 ```
 
-More info
----------
+For further info on dune module installation process, please check out 
+the [dune-project web page](https://www.dune-project.org/doc/installation/)
 
-See
+## Usage 
+
+If you installed `dune-copasi` system wide, you should be able to call the program
+`dune_copasi` from your command line accompained with a configuration file.
 
 ```bash
-     dunecontrol --help
+dune_copasi config.ini
 ```
 
-for further options.
-
-
-The full build system is described in the `dune-common/doc/buildsystem` (Git version) or under `share/doc/dune-common/buildsystem` if you installed DUNE! -->
+* TODO: Add an example of `config.ini`.
+* TODO: Add licence
