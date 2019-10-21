@@ -126,6 +126,7 @@ stages:
     - master
 
 pages:
+  <<: *general_definitions
   stage: deploy
   script:
   - make doc
