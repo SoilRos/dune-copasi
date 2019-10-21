@@ -126,6 +126,7 @@ stages:
     - master
 
 pages:
+  <<: *debian_clang
   <<: *general_definitions
   stage: deploy
   script:
