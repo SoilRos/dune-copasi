@@ -1,9 +1,9 @@
 #ifndef DUNE_COPASI_MULTIDOMAIN_LOCAL_FINITE_ELEMENT_MAP_HH
 #define DUNE_COPASI_MULTIDOMAIN_LOCAL_FINITE_ELEMENT_MAP_HH
 
-#include <dune/pdelab/finiteelementmap/finiteelementmap.hh>
+#include <dune/copasi/finite_element/dynamic_local_finite_element.hh>
 
-#include <dune/copasi/dynamic_local_finite_element.hh>
+#include <dune/pdelab/finiteelementmap/finiteelementmap.hh>
 
 namespace Dune::Copasi {
 

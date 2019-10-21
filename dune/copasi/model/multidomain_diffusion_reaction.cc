@@ -7,11 +7,11 @@
  * file but a header which has to be included when compiling.
  */
 
+#include <dune/copasi/model/multidomain_diffusion_reaction.hh>
+#include <dune/copasi/common/muparser_data_handler.hh>
+
 #include <dune/pdelab/common/functionutilities.hh>
 #include <dune/pdelab/gridfunctionspace/gridfunctionadapter.hh>
-
-#include <dune/copasi/model_multidomain_diffusion_reaction.hh>
-#include <dune/copasi/muparser_data_handler.hh>
 
 namespace Dune::Copasi {
 

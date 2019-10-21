@@ -2,11 +2,11 @@
 # include "config.h"
 #endif
 
-#include <dune/copasi/gmsh_reader.hh>
-#include <dune/copasi/model_diffusion_reaction.hh>
-#include <dune/copasi/model_diffusion_reaction.cc>
-#include <dune/copasi/model_multidomain_diffusion_reaction.hh>
-#include <dune/copasi/enum.hh>
+#include <dune/copasi/common/enum.hh>
+#include <dune/copasi/grid/multidomain_gmsh_reader.hh>
+#include <dune/copasi/model/diffusion_reaction.hh>
+#include <dune/copasi/model/diffusion_reaction.cc>
+#include <dune/copasi/model/multidomain_diffusion_reaction.hh>
 
 #include <dune/grid/multidomaingrid.hh>
 #include <dune/grid/io/file/gmshreader.hh>

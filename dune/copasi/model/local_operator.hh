@@ -1,9 +1,9 @@
 #ifndef DUNE_COPASI_LOCAL_OPERATOR_DIFFUSION_REACTION_HH
 #define DUNE_COPASI_LOCAL_OPERATOR_DIFFUSION_REACTION_HH
 
-#include <dune/copasi/pdelab_expression_adapter.hh>
-#include <dune/copasi/coefficient_mapper.hh>
-#include <dune/copasi/enum.hh>
+#include <dune/copasi/common/pdelab_expression_adapter.hh>
+#include <dune/copasi/common/coefficient_mapper.hh>
+#include <dune/copasi/common/enum.hh>
 
 #include <dune/pdelab/common/quadraturerules.hh>
 #include <dune/pdelab/localoperator/flags.hh>

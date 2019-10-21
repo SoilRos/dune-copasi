@@ -7,8 +7,8 @@
  * file but a header which has to be included when compiling.
  */
 
-#include <dune/copasi/model_diffusion_reaction.hh>
-#include <dune/copasi/pdelab_expression_adapter.hh>
+#include <dune/copasi/common/pdelab_expression_adapter.hh>
+#include <dune/copasi/model/diffusion_reaction.hh>
 
 #include <dune/pdelab/function/callableadapter.hh>
 #include <dune/pdelab/gridfunctionspace/vtk.hh>

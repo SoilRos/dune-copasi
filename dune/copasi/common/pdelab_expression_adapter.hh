@@ -1,7 +1,7 @@
 #ifndef DUNE_COPASI_GRID_FUNCTION_EXPRESSION_ADAPTER_HH
 #define DUNE_COPASI_GRID_FUNCTION_EXPRESSION_ADAPTER_HH
 
-#include <dune/copasi/tiff_grayscale.hh>
+#include <dune/copasi/common/tiff_grayscale.hh>
 
 #include <dune/pdelab/common/function.hh>
 
