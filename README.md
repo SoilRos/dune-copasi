@@ -30,7 +30,7 @@ https://github.com/lkeegan/spatial-model-editor
 
 ## Installation
 
-This requires that you have installed the following packages before the actual installation of `dune-copasi`. Notice that
+This requires that you have installed the following packages before the actual installation of `dune-copasi`.
 
 | Software | Version/Branch | Comments |
 | ---------| -------------- | -------- |
