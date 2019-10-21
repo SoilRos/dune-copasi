@@ -129,6 +129,9 @@ pages:
   <<: *general_definitions
   stage: deploy
   script:
+  - pwd
+  - ls
+  - cd build-cmake
   - make doc
   - mv doc/doxygen/html/ public/
   artifacts:
