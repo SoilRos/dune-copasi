@@ -91,7 +91,10 @@ git clone https://gitlab.dune-project.org/copasi/dune-copasi
 
 # if you do not want to install dune-copasi system wide, you can set
 # the CMAKE_INSTALL_PREFIX  to a non restricted folder
-# see https://cmake.org/cmake/help/latest/variable/CMAKE_INSTALL_PREFIX.htmlZ
+# see https://cmake.org/cmake/help/latest/variable/CMAKE_INSTALL_PREFIX.html
+
+# remove source and build files
+cd .. && rm -r ~/dune-modules
 ```
 
 For further info on dune module installation process, please check out 
