@@ -8,7 +8,6 @@
  */
 
 #include <dune/copasi/model_diffusion_reaction.hh>
-#include <dune/copasi/pdelab_callable_adapter.hh>
 #include <dune/copasi/pdelab_expression_adapter.hh>
 
 #include <dune/pdelab/function/callableadapter.hh>
