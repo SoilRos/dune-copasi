@@ -153,8 +153,10 @@ and we are going to use them as `nucleous` and `cytoplasm` compartments:
 
 ```ini
 [model.compartments]
-nucleous  = 0 # corresponds to the physical group 1 in the gmsh file
-cytoplasm = 0 # corresponds to the physical group 2 in the gmsh file
+ # nucleous corresponds to the physical group 1 in the gmsh file
+nucleous  = 0
+ # cytoplasm corresponds to the physical group 2 in the gmsh file
+cytoplasm = 0
 ```
 
 Now, each of these compartments will define its own initial conditions,
@@ -163,20 +165,24 @@ the `model` section with the defined compartments, e.g. `model.nucleous` or `mod
 The subsection `initial`, `reaction`, `diffusion` and `operator` define the system variables 
 and its properties. You can put as many variables as desired as long as they are the same 
 in this three subsections. Notice that each variable defines a new diffusion-reaction partial 
-differential equation associated with it. The `initial` subsection allow the initialization 
-of each of the variables. The `diffusion` subsection defines the diffusion coefficient math 
-expression associated with each variable. It may only depend on the grid coordinates `x` and `y`.
-The `reaction` subsection defines the reaction part of each equation in the PDE. 
-Since this is the souce of non-linearities, it allows to be dependent on other defined variables
-within the compartment. This section has to include yet another subsection called `jacobian`.
-The `reaction.jacobian` subsection must describe the 
-[jacobian matrix](https://en.wikipedia.org/wiki/Jacobian_matrix_and_determinant)
-of the `reaction` part. It must follow the syntax of `d<var_i>_d<var_j>`, which 
-reads as the *partial derivate of `<var_i>` with respect to `<var_j>`. The `operator`
-subsection is an experimental feature and we recommend to set all variables to the 
-same index, e.g. 0. Finally, the subsection `writer` will define the file name for
-the vtk output. For example, the following `mode.nucleous` section defines a [Gray-Scott
-model with `F=0.0420` and `k=0.0610`](http://mrob.com/pub/comp/xmorphia/F420/F420-k610.html)
+differential equation associated with it. 
+
+  * The `initial` subsection allow the initialization of each of the variables. 
+  * The `diffusion` subsection defines the diffusion coefficient math 
+  expression associated with each variable. It may only depend on the grid coordinates `x` and `y`.
+  * The `reaction` subsection defines the reaction part of each equation in the PDE. 
+  Since this is the souce of non-linearities, it allows to be dependent on other defined variables
+  within the compartment. This section has to include yet another subsection called `jacobian`.
+  * The `reaction.jacobian` subsection must describe the 
+  [jacobian matrix](https://en.wikipedia.org/wiki/Jacobian_matrix_and_determinant)
+  of the `reaction` part. It must follow the syntax of `d<var_i>_d<var_j>`, which 
+  reads as the *partial derivate of `<var_i>` with respect to `<var_j>`*. 
+  * The `operator` subsection is an experimental feature and we recommend to set all variables to the 
+  same index, e.g. 0. 
+  * Finally, the subsection `writer` will define the file name for the vtk output. 
+  
+For example, the following `mode.nucleous` section defines a [Gray-Scott
+model with `F=0.0420` and `k=0.0610`](http://mrob.com/pub/comp/xmorphia/F420/F420-k610.html):
 
 ```ini
 [model.nucleous.initial]
