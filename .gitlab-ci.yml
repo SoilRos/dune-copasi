@@ -77,7 +77,7 @@ stages:
     - docker push ${CI_REGISTRY}/copasi/dune-copasi/dependencies:${DUNECI_OS}-${DUNECI_TOOLCHAIN}
     - docker logout $CI_REGISTRY/copasi/dune-copasi
 
-  except:
+  only:
     # Run job if branch is master, job is scheduled or the variable REBUILD_BASE_IMAGE is defined
     refs:
       - master
