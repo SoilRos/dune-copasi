@@ -77,7 +77,10 @@ stages:
     - docker push ${CI_REGISTRY}/copasi/dune-copasi/dependencies:${DUNECI_OS}-${DUNECI_TOOLCHAIN}
     - docker logout $CI_REGISTRY/copasi/dune-copasi
   only:
-    - master
+    refs:
+      - master
+      - schedules
+      - $REBUILD_BASE_IMAGE
 
 .build: &build
   stage: build
