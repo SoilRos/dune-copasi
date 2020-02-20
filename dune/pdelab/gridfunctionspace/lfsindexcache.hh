@@ -306,6 +306,7 @@ namespace Dune {
 
       typedef std::vector<ConstraintsEntry> ConstraintsVector;
       typedef typename ConstraintsVector::const_iterator ConstraintsIterator;
+      typedef typename TreeContainerHelper<size_type,LFS>::type LeafSizeVector;
 
       LFSIndexCacheBase(const LFS& lfs, const C& constraints, bool enable_constraints_caching)
         : _lfs(lfs)
@@ -338,10 +339,8 @@ namespace Dune {
           _inverse_cache_built = false;
 
           // extract size for all leaf spaces (into a flat list)
-          using LeafSizeVector = typename TreeContainerHelper<size_type,LFS>::type;
-          LeafSizeVector leaf_sizes;
-          leaf_sizes.resize(TypeTree::leafCount(_lfs));
-          extract_lfs_leaf_sizes(_lfs,leaf_sizes.begin());
+          _leaf_sizes.resize(TypeTree::leafCount(_lfs));
+          extract_lfs_leaf_sizes(_lfs,_leaf_sizes.begin());
 
           // perform the actual mapping
           map_dof_indices_to_container_indices<
@@ -350,7 +349,7 @@ namespace Dune {
             typename LeafSizeVector::const_iterator,
             TypeTree::TreeInfo<Ordering>::depth,
             fast
-            > index_mapper(_lfs._dof_indices->begin(),_container_indices.begin(),leaf_sizes.begin(),_lfs.subSpaceDepth());
+            > index_mapper(_lfs._dof_indices->begin(),_container_indices.begin(),_leaf_sizes.begin(),_lfs.subSpaceDepth());
           TypeTree::applyToTree(_lfs.gridFunctionSpace().ordering(),index_mapper);
 
           if (_enable_constraints_caching)
@@ -559,6 +558,7 @@ namespace Dune {
       ConstraintsVector _constraints;
       mutable OffsetContainer _offsets;
       mutable OffsetContainer _extended_offsets;
+      OffsetContainer _leaf_sizes;
       mutable bool _inverse_cache_built;
       mutable InverseMap _inverse_map;
 
@@ -604,6 +604,7 @@ namespace Dune {
 
       typedef std::vector<ConstraintsEntry> ConstraintsVector;
       typedef typename ConstraintsVector::const_iterator ConstraintsIterator;
+      typedef typename TreeContainerHelper<size_type,LFS>::type LeafSizeVector;
 
       explicit LFSIndexCacheBase(const LFS& lfs)
         : _lfs(lfs)
@@ -634,11 +635,8 @@ namespace Dune {
             it->clear();
 
           // extract size for all leaf spaces (into a flat list)
-          using LeafSizeVector = typename TreeContainerHelper<size_type,LFS>::type;
-          LeafSizeVector leaf_sizes;
-          leaf_sizes.resize(TypeTree::leafCount(_lfs));
-
-          extract_lfs_leaf_sizes(_lfs,leaf_sizes.begin());
+          _leaf_sizes.resize(TypeTree::leafCount(_lfs));
+          extract_lfs_leaf_sizes(_lfs,_leaf_sizes.begin());
 
           // perform the actual mapping
           map_dof_indices_to_container_indices<
@@ -647,7 +645,7 @@ namespace Dune {
             typename LeafSizeVector::const_iterator,
             TypeTree::TreeInfo<Ordering>::depth,
             fast
-            > index_mapper(_lfs._dof_indices->begin(),_container_indices.begin(),leaf_sizes.begin(),_lfs.subSpaceDepth());
+            > index_mapper(_lfs._dof_indices->begin(),_container_indices.begin(),_leaf_sizes.begin(),_lfs.subSpaceDepth());
           TypeTree::applyToTree(_lfs.gridFunctionSpace().ordering(),index_mapper);
         }
       }
@@ -716,7 +714,7 @@ namespace Dune {
       CIVector _container_indices;
       mutable CIMap _container_index_map;
       const ConstraintsVector _constraints;
-
+      LeafSizeVector _leaf_sizes;
     };
 
 
