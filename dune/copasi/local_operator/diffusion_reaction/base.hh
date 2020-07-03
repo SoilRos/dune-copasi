@@ -177,16 +177,12 @@ struct LocalOperatorDiffusionReactionBase
 
         _jacobian_gf[j] =
           std::make_shared<ExpressionAdapter>(grid_view, j_eq, true, reaction_keys);
-        if (k == l) {
-          _component_pattern.insert(std::make_pair(k, l));
-          continue;
-        }
 
-        bool do_pattern = true;
-        do_pattern &= (j_eq != "0");
-        do_pattern &= (j_eq != "0.0");
-        do_pattern &= (j_eq != ".0");
-        do_pattern &= (j_eq != "0.");
+        bool do_pattern = false;
+        // Always do diagonal pattern (diffusion always has contribution here)
+        do_pattern |= (k == l);
+        // Do off-diagonal pattern if jacobian (reaction part) is different than zero
+        do_pattern |= (j_eq != "0") && (j_eq != "0.0") && (j_eq != ".0") && (j_eq != "0.");
         if (do_pattern)
           _component_pattern.insert(std::make_pair(k, l));
       }
