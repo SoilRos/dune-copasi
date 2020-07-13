@@ -10,3 +10,37 @@ index 693bab6..dd4ffae 100644
      PUBLIC DUNE_LOGGING_VENDORED_FMT=1
      )
  
+diff --git a/dune/logging/fmt.hh b/dune/logging/fmt.hh
+index d9bf428..558e362 100644
+--- a/dune/logging/fmt.hh
++++ b/dune/logging/fmt.hh
+@@ -212,7 +212,13 @@ namespace fmt {
+   struct formatter<Dune::Logging::LazyFormatArgument<Factory,cached>,Char>
+     : public formatter<
+         std::conditional_t<
+-          fmt::internal::is_string<
++          fmt::
++#if FMT_VERSION < 70000
++          internal
++#else
++          detail
++#endif
++          ::is_string<
+             std::decay_t<decltype(std::declval<Factory>()())>
+             >::value,
+           fmt::basic_string_view<Char>,
+@@ -226,7 +232,13 @@ namespace fmt {
+     using Result = std::decay_t<decltype(std::declval<Factory>()())>;
+     using Base   = formatter<
+       std::conditional_t<
+-        fmt::internal::is_string<Result>::value,
++        fmt::
++#if FMT_VERSION < 70000
++        internal
++#else
++        detail
++#endif
++        ::is_string<Result>::value,
+         fmt::basic_string_view<Char>,
+         Result
+         >,
