@@ -6,6 +6,8 @@
 
 namespace Dune::Copasi {
 
+namespace {
+
 //! Helper lambda functions which apply functions to local operators
 namespace LocalOperatorApply {
 
@@ -163,6 +165,8 @@ auto jacobianApplyBoundary = [](const auto& lop, auto&... args)
 };
 
 } // namespace LocalOperatorApply
+
+}
 
 // this class helps to forward different (dynamic) finite elements to different (static) local operators.
 // In case that skeleton terms appear on different operators (e.g. inside -> DGP2, outside-> DGP1) such
