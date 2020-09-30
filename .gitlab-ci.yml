@@ -71,6 +71,7 @@ stages:
     - "${DOCKER_CI_TAG}"
 
 .build: &build
+  image: ${DUNE_COPASI_BASE_IMAGE}
   stage: build
   script:
     - cd ..
@@ -82,6 +83,7 @@ stages:
   <<: *default_tags
 
 .unit_tests: &unit_tests
+  image: ${DUNE_COPASI_BASE_IMAGE}
   stage: unit_tests
   script:
     - echo 'CMAKE_FLAGS+=" -DCMAKE_BUILD_TYPE=Debug"' >> /duneci/cmake-flags/dune_copasi.opts
@@ -94,6 +96,7 @@ stages:
   <<: *default_tags
 
 .system_tests: &system_tests
+  image: ${DUNE_COPASI_BASE_IMAGE}
   stage: system_tests
   script:
     - cd ..
@@ -106,6 +109,7 @@ stages:
   <<: *default_tags
 
 .deploy: &deploy
+  image: ${DOCKER_IMAGE}
   stage: deploy
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY/copasi/dune-copasi
@@ -128,6 +132,8 @@ stages:
     - if: '$CI_COMMIT_TAG'
     - if: '$CI_COMMIT_BRANCH == "master"'
     - if: '$CI_PIPELINE_SOURCE == "schedule"'
+  tags:
+    - "${DOCKER_CI_TAG}"
 
 # debian gcc
 setup:debian_gcc:
