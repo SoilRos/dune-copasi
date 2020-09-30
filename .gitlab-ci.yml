@@ -62,6 +62,7 @@ stages:
     - echo "$CI_REGISTRY_PASSWORD" | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY/copasi/dune-copasi
     - docker build -f docker/dependencies.dockerfile
         --build-arg BASE_IMAGE=${DUNECI_BASE_IMAGE}
+        --build-arg TOOLCHAIN=${DUNECI_TOOLCHAIN}
         -t ${DUNE_COPASI_BASE_IMAGE} .
     - docker push ${DUNE_COPASI_BASE_IMAGE}
     - docker logout $CI_REGISTRY/copasi/dune-copasi
