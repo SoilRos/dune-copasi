@@ -36,7 +36,7 @@ stages:
 
 .debian_clang: &debian_clang
   <<: *global_variables
-  TOOLCHAIN: clang-7-libcpp-17
+  TOOLCHAIN: clang-6-17
   DUNECI_OS: debian
   DUNECI_BASE_IMAGE: ${CI_REGISTRY}/docker/ci/debian:10
   DUNE_COPASI_BASE_IMAGE: ${CI_REGISTRY}/copasi/dune-copasi/dependencies:${DUNECI_OS}-${TOOLCHAIN}-${BASE_IMAGE_VERSION}
