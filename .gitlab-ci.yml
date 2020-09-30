@@ -28,32 +28,32 @@ stages:
 
 .debian_gcc: &debian_gcc
   <<: *global_variables
-  DUNECI_TOOLCHAIN: gcc-8-17
+  TOOLCHAIN: gcc-8-17
   DUNECI_OS: debian
   DUNECI_BASE_IMAGE: ${CI_REGISTRY}/docker/ci/debian:10
-  DUNE_COPASI_BASE_IMAGE: ${CI_REGISTRY}/copasi/dune-copasi/dependencies:${DUNECI_OS}-${DUNECI_TOOLCHAIN}-${BASE_IMAGE_VERSION}
+  DUNE_COPASI_BASE_IMAGE: ${CI_REGISTRY}/copasi/dune-copasi/dependencies:${DUNECI_OS}-${TOOLCHAIN}-${BASE_IMAGE_VERSION}
   DEPLOY_LATEST: "true"
 
 .debian_clang: &debian_clang
   <<: *global_variables
-  DUNECI_TOOLCHAIN: clang-7-libcpp-17
+  TOOLCHAIN: clang-7-libcpp-17
   DUNECI_OS: debian
   DUNECI_BASE_IMAGE: ${CI_REGISTRY}/docker/ci/debian:10
-  DUNE_COPASI_BASE_IMAGE: ${CI_REGISTRY}/copasi/dune-copasi/dependencies:${DUNECI_OS}-${DUNECI_TOOLCHAIN}-${BASE_IMAGE_VERSION}
+  DUNE_COPASI_BASE_IMAGE: ${CI_REGISTRY}/copasi/dune-copasi/dependencies:${DUNECI_OS}-${TOOLCHAIN}-${BASE_IMAGE_VERSION}
 
 .ubuntu_gcc: &ubuntu_gcc
   <<: *global_variables
-  DUNECI_TOOLCHAIN: gcc-7-17
+  TOOLCHAIN: gcc-7-17
   DUNECI_OS: ubuntu
   DUNECI_BASE_IMAGE: ${CI_REGISTRY}/docker/ci/ubuntu:18.04
-  DUNE_COPASI_BASE_IMAGE: ${CI_REGISTRY}/copasi/dune-copasi/dependencies:${DUNECI_OS}-${DUNECI_TOOLCHAIN}-${BASE_IMAGE_VERSION}
+  DUNE_COPASI_BASE_IMAGE: ${CI_REGISTRY}/copasi/dune-copasi/dependencies:${DUNECI_OS}-${TOOLCHAIN}-${BASE_IMAGE_VERSION}
 
 .ubuntu_clang: &ubuntu_clang
   <<: *global_variables
-  DUNECI_TOOLCHAIN: clang-6-17
+  TOOLCHAIN: clang-6-17
   DUNECI_OS: ubuntu
   DUNECI_BASE_IMAGE: ${CI_REGISTRY}/docker/ci/ubuntu:18.04
-  DUNE_COPASI_BASE_IMAGE: ${CI_REGISTRY}/copasi/dune-copasi/dependencies:${DUNECI_OS}-${DUNECI_TOOLCHAIN}-${BASE_IMAGE_VERSION}
+  DUNE_COPASI_BASE_IMAGE: ${CI_REGISTRY}/copasi/dune-copasi/dependencies:${DUNECI_OS}-${TOOLCHAIN}-${BASE_IMAGE_VERSION}
 
 .setup: &setup
   image: ${DOCKER_IMAGE}
@@ -62,15 +62,15 @@ stages:
     - echo "$CI_REGISTRY_PASSWORD" | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY/copasi/dune-copasi
     - docker build -f docker/dependencies.dockerfile
         --build-arg BASE_IMAGE=${DUNECI_BASE_IMAGE}
-        --build-arg TOOLCHAIN=${DUNECI_TOOLCHAIN}
+        --build-arg TOOLCHAIN=${TOOLCHAIN}
         -t ${DUNE_COPASI_BASE_IMAGE} .
     - docker push ${DUNE_COPASI_BASE_IMAGE}
     - docker logout $CI_REGISTRY/copasi/dune-copasi
   rules:
     - if: '$REBUILD_BASE_IMAGE'
     - if: '$CI_COMMIT_TAG'
-    - if: '$CI_COMMIT_BRANCH == "master"'
-    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+    - if: '$CI_COMMIT_BRANCH == "latest"'
   <<: *dind_docker_tags
 
 .build: &build
@@ -116,25 +116,22 @@ stages:
   stage: deploy
   script:
     - echo "$CI_REGISTRY_PASSWORD" | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY/copasi/dune-copasi
+    - DOCKER_TAG="${DUNECI_OS}-${TOOLCHAIN}-${CI_COMMIT_REF_NAME}"
+    - docker build -f docker/dune-copasi.dockerfile
+      --build-arg BASE_IMAGE=${DUNE_COPASI_BASE_IMAGE}
+      --build-arg BRANCH=${CI_COMMIT_REF_NAME}
+      -t $CI_REGISTRY/copasi/dune-copasi/dune-copasi:${DOCKER_TAG} .
+    - docker push $CI_REGISTRY/copasi/dune-copasi/dune-copasi:${DOCKER_TAG}
     - |
-      if [ "$CI_COMMIT_TAG" == "latest" && $DEPLOY_LATEST ]; then
-        docker build -f docker/dune-copasi.dockerfile             \
-          --build-arg BASE_IMAGE=${DUNE_COPASI_BASE_IMAGE}        \
-          --build-arg BRANCH=${CI_COMMIT_REF_NAME}                \
-          -t $CI_REGISTRY/copasi/dune-copasi/dune-copasi:latest .
+      if [ "$CI_COMMIT_BRANCH" == "latest" && $DEPLOY_LATEST ]; then
+        docker tag $CI_REGISTRY/copasi/dune-copasi/dune-copasi:${DOCKER_TAG} $CI_REGISTRY/copasi/dune-copasi/dune-copasi:latest
         docker push $CI_REGISTRY/copasi/dune-copasi/dune-copasi:latest
-      else if [ "$CI_COMMIT_TAG" != "latest" ]
-        docker build -f docker/dune-copasi.dockerfile             \
-          --build-arg BASE_IMAGE=${DUNE_COPASI_BASE_IMAGE}        \
-          --build-arg BRANCH=${CI_COMMIT_REF_NAME}                \
-          -t $CI_REGISTRY/copasi/dune-copasi/dune-copasi:${DUNECI_OS}-${DUNECI_TOOLCHAIN}-${CI_COMMIT_REF_NAME} .
-        docker push $CI_REGISTRY/copasi/dune-copasi/dune-copasi:${DUNECI_OS}-${DUNECI_TOOLCHAIN}-${CI_COMMIT_REF_NAME}
       fi
     - docker logout $CI_REGISTRY/copasi/dune-copasi
   rules:
     - if: '$CI_COMMIT_TAG'
-    - if: '$CI_COMMIT_BRANCH == "master"'
-    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+    - if: '$CI_COMMIT_BRANCH == "latest"'
   <<: *dind_docker_tags
 
 # debian gcc
