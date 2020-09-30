@@ -79,6 +79,7 @@ stages:
     paths:
       - build-cmake
     expire_in: 30 mins
+  <<: *default_tags
 
 .unit_tests: &unit_tests
   stage: unit_tests
@@ -90,6 +91,7 @@ stages:
     paths:
       - build-cmake/test
     expire_in: 1 day
+  <<: *default_tags
 
 .system_tests: &system_tests
   stage: system_tests
@@ -101,6 +103,7 @@ stages:
       - cd ..
       - build-cmake/test
     expire_in: 1 day
+  <<: *default_tags
 
 .deploy: &deploy
   stage: deploy
