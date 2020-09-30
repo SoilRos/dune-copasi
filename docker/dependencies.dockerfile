@@ -2,8 +2,8 @@ ARG BASE_IMAGE=registry.dune-project.org/docker/ci/ubuntu:18.04
 FROM ${BASE_IMAGE}
 ARG DUNECI_PARALLEL=2
 
-ARG TOOLCHAIN="clang-6-17"
-RUN ln -s /duneci/toolchains/${TOOLCHAIN} /duneci/toolchain
+ARG DUNECI_TOOLCHAIN="clang-6-17"
+RUN ln -s /duneci/toolchains/${DUNECI_TOOLCHAIN} /duneci/toolchain
 
 RUN echo 'CMAKE_FLAGS+=" -DDUNE_PYTHON_VIRTUALENV_SETUP=1 -DDUNE_PYTHON_VIRTUALENV_PATH=/duneci/modules/dune-python-venv"' >> /duneci/cmake-flags/enable_virtualenv
 RUN echo 'CMAKE_FLAGS+=" -DCMAKE_GENERATOR="Ninja' >> /duneci/cmake-flags/cmake_generator
