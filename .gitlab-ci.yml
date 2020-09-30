@@ -28,7 +28,7 @@ stages:
   DUNECI_TOOLCHAIN: gcc-8-17
   DUNECI_OS: debian
   DUNECI_BASE_IMAGE: ${CI_REGISTRY}/docker/ci/debian:10
-  DUNE_COPASI_BASE_IMAGE: ${CI_REGISTRY}/copasi/dune-copasi/dependencies-${DUNECI_OS}-${DUNECI_TOOLCHAIN}:${BASE_IMAGE_VERSION}
+  DUNE_COPASI_BASE_IMAGE: ${CI_REGISTRY}/copasi/dune-copasi/dependencies:${DUNECI_OS}-${DUNECI_TOOLCHAIN}-${BASE_IMAGE_VERSION}
   DEPLOY_LATEST: "true"
 
 .debian_clang: &debian_clang
@@ -36,21 +36,21 @@ stages:
   DUNECI_TOOLCHAIN: clang-7-libcpp-17
   DUNECI_OS: debian
   DUNECI_BASE_IMAGE: ${CI_REGISTRY}/docker/ci/debian:10
-  DUNE_COPASI_BASE_IMAGE: ${CI_REGISTRY}/copasi/dune-copasi/dependencies:${DUNECI_OS}-${DUNECI_TOOLCHAIN}:${BASE_IMAGE_VERSION}
+  DUNE_COPASI_BASE_IMAGE: ${CI_REGISTRY}/copasi/dune-copasi/dependencies:${DUNECI_OS}-${DUNECI_TOOLCHAIN}-${BASE_IMAGE_VERSION}
 
 .ubuntu_gcc: &ubuntu_gcc
   <<: *global_variables
   DUNECI_TOOLCHAIN: gcc-7-17
   DUNECI_OS: ubuntu
   DUNECI_BASE_IMAGE: ${CI_REGISTRY}/docker/ci/ubuntu:18.04
-  DUNE_COPASI_BASE_IMAGE: ${CI_REGISTRY}/copasi/dune-copasi/dependencies:${DUNECI_OS}-${DUNECI_TOOLCHAIN}:${BASE_IMAGE_VERSION}
+  DUNE_COPASI_BASE_IMAGE: ${CI_REGISTRY}/copasi/dune-copasi/dependencies:${DUNECI_OS}-${DUNECI_TOOLCHAIN}-${BASE_IMAGE_VERSION}
 
 .ubuntu_clang: &ubuntu_clang
   <<: *global_variables
   DUNECI_TOOLCHAIN: clang-6-17
   DUNECI_OS: ubuntu
   DUNECI_BASE_IMAGE: ${CI_REGISTRY}/docker/ci/ubuntu:18.04
-  DUNE_COPASI_BASE_IMAGE: ${CI_REGISTRY}/copasi/dune-copasi/dependencies:${DUNECI_OS}-${DUNECI_TOOLCHAIN}:${BASE_IMAGE_VERSION}
+  DUNE_COPASI_BASE_IMAGE: ${CI_REGISTRY}/copasi/dune-copasi/dependencies:${DUNECI_OS}-${DUNECI_TOOLCHAIN}-${BASE_IMAGE_VERSION}
 
 .setup: &setup
   image: ${DOCKER_IMAGE}
