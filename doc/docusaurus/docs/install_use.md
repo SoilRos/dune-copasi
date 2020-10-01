@@ -7,6 +7,9 @@ sidebar_label: Install & Use
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
+:::caution Work In Progres
+:::
+
 There are two forms to use `DuneCopasi`. The first and easiest one is using a
 [Docker Container](https://www.docker.com/) where the software is boundled such
 that no installation other than docker is required. On the second one, the
@@ -14,11 +17,26 @@ compilation of the source code is compulsory.
 
 ## Containerized Usage
 
-First, get and install docker following the
-[docker documentation](https://docs.docker.com/get-docker/).
+In this mode, there is no need to fullfil specific requirements other than
+those for docker installation.
 
-:::caution Work In Progress
-:::
+### Install Docker
+First, get and install Docker following the
+[docker installation instructions](https://docs.docker.com/get-docker/).
+
+### Pull Container
+Then, you may get the latest stable `DuneCopasi` container by pulling it from
+the [GitLab registry](https://gitlab.dune-project.org/copasi/dune-copasi/container_registry)
+
+```bash
+docker pull registry.dune-project.org/copasi/dune-copasi/dune-copasi:latest
+```
+
+### Run `DuneCopasi`
+Finally, run the `dune_copasi_md` executable from the container
+```bash
+# TODO
+```
 
 ## Manual Installation
 
@@ -130,7 +148,7 @@ If you don't want to install the `DUNE` modules system-wide, you can set the
 [here](https://cmake.org/cmake/help/latest/variable/CMAKE_INSTALL_PREFIX.html).
 :::
 
-### Usage
+### Run `DuneCopasi`
 
 In case you installed `DuneCopasi` system-wide, you should be able to call the
 program `dune_copasi_md` from your command line accompained with a configuration
@@ -138,7 +156,7 @@ file. Otherwise, the executable will be under `bin/` folder on the installed
 directory.
 
 ```bash
-dune_copasi_md config.ini
+# TODO
 ```
 
 To find out the appropiated contents on the configuration file, check out

@@ -10,9 +10,10 @@ hide_table_of_contents: false
 
 ## Reference Keys
 
-The parameter tree follows the `DUNE`
-[INI file format](https://en.wikipedia.org/wiki/INI_file). In the following we
-refer to sections using brakets `[section]` and keys without them `key`.
+The parameter tree is a collection of *key–value pairs* that may be grouped by
+sections. We call it a *tree* because sections may contain also other sections.
+Here, we follow the [`DUNE` ini file convention](ini_file.md) to refer to
+sections and keyords.
 
 ### `[grid]`
 
@@ -33,7 +34,7 @@ begining of the file (this is a knwon bug in the `dune-grid` GMSH reader).
 | Key | Description |
 | ----------------| -------------- |
 | `dimension`     | The dimension of the grid |
-|  `file`         | [GMSH v2 file][GMSH] directory absolute or relative to the executable |
+| `file`          | [GMSH v2 file][GMSH] directory absolute or relative to the executable |
 | `initial_level` | The refinement level to start the simulation with |
 
 
