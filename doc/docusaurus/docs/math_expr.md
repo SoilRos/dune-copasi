@@ -7,9 +7,8 @@ sidebar_label: Math Expressions
 Mathematical expressions are permitted on different sections of the
 [Parameter Tree](param_tree.md). Such expressions may contain typical math
 operations such as `+`, `-`, `*`, `^`, `sin`, `tan`, etc. The complete list of
-possibilities is found [here](https://beltoforion.de/en/muparser/features.php),
-the webpage of the math compiler that we use. That is, the `muParser` built in
-operators.
+possibilities is found [here](https://beltoforion.de/en/muparser/features.php).
+That is, the `muParser` built in operators.
 
 Furthermore, we provide extra variables/functions that may be included on the
 math expressions.

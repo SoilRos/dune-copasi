@@ -1,7 +1,7 @@
 ---
-id: intro
-title: Introduction
-sidebar_label: Introduction
+id: about
+title: About
+sidebar_label: About
 ---
 
 `DuneCopasi` is a library that provides numerical solutions of

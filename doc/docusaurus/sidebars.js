@@ -1,7 +1,7 @@
 module.exports = {
   docs: {
-    'DuneCopasi': [
-      'intro',
+    'Information': [
+      'about',
       'math_model',
       'community',
       'contribute',

@@ -23,7 +23,10 @@ module.exports = {
   ],
 
   themeConfig: {
-    // Syntax highlight
+    colorMode: {
+      defaultMode: 'light',
+      disableSwitch: true,
+    },
     prism: {
       additionalLanguages: ['ini'],
     },
@@ -45,38 +48,35 @@ module.exports = {
           label: 'Learn',
           position: 'left',
         },
+        {
+          position: 'left',
+          label: 'Help',
+          items: [
+            {
+              href: 'https://gitlab.dune-project.org/copasi/dune-copasi/-/issues',
+              label: 'Bug tracker',
+              position: 'left',
+            },
+          ],
+        },
         // {to: 'blog', label: 'Blog', position: 'left'},
         {
           href: 'https://gitlab.dune-project.org/copasi/dune-copasi',
-          label: 'GitLab',
-          // className: 'header-gitlab-link', // TODO
+          className: 'header-gitlab-link',
           position: 'right',
           'aria-label': 'GitLab repository',
         },
         {
           href: 'https://github.com/dune-copasi/dune-copasi',
           position: 'right',
-          // label: 'GitHub',
           className: 'header-github-link',
           'aria-label': 'GitHub repository',
         },
-      ],
-    },
-    footer: {
-      style: 'dark',
-      links: [
         {
-          title: 'Learn',
-          items: [
-            {
-              label: 'Introduction',
-              to: 'docs/',
-            },
-            {
-              label: 'Get Started',
-              to: 'docs/install_use',
-            },
-          ],
+          href: 'https://gitlab.dune-project.org/copasi/dune-copasi/container_registry',
+          position: 'right',
+          className: 'header-docker-link',
+          'aria-label': 'Docker registry',
         },
       ],
     },
@@ -86,12 +86,14 @@ module.exports = {
       '@docusaurus/preset-classic',
       {
         docs: {
-          homePageId: 'intro',
+          homePageId: 'about',
           sidebarPath: require.resolve('./sidebars.js'),
           editUrl:
           'https://gitlab.dune-project.org/copasi/dune-copasi/-/edit/master/doc/docusaurus/',
           remarkPlugins: [math],
           rehypePlugins: [katex],
+          showLastUpdateTime: true,
+          showLastUpdateAuthor: true,
         },
         blog: {
           showReadingTime: true,
