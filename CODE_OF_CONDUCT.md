@@ -4,8 +4,6 @@ title: Code of Conduct
 sidebar_label: Code of Conduct
 ---
 
-# Contributor Covenant Code of Conduct
-
 ## Our Pledge
 
 We as members, contributors, and leaders pledge to make participation in our

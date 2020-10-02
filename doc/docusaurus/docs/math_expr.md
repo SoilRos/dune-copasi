@@ -34,12 +34,11 @@ expressions:
 Additionally, there are other variables that are conditionally available to
 define the expression. These variables depend on the context of its definition.
 An example of it, is the reaction expressions within a compartment. If the
-section `[model.<compartment>.reaction]` defines expresions `u`, `v`, and `w`,
-then, they all will be be available to each other.
+section `[model.nucleous.reaction]` defines expresions `u`, `v`, and `w`,
+then, they all will be available to each other. E.g.
 
 ```ini
-# Example: In reaction sections, variables u, v, and w are available to each other
-[model.<compartment>.reaction]
+[model.nucleous.reaction]
 u = u*v*w
 v = u*v*w
 w = u*v*w

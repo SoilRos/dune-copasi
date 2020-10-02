@@ -6,7 +6,7 @@ sidebar_label: Input Data
 
 ## TIFF Images
 
-Each `key=calue` pair on the `[model.data]` section defines a
+Each `key=value` pair on the `[model.data]` section defines a
 [Context-Dependet-Function](math_expr.md) with 2 arguments named as the `key`
 indentifier. The corresponding `value` should contain the directory path for a
 16-bit grayscale TIFF file. These function are permitted to be used on the
