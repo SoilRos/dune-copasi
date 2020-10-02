@@ -6,6 +6,7 @@ module.exports = {
       'community',
       'contribute',
       'code_of_conduct',
+      'changelog',
     ],
     'Getting Started': [
       'install_use',
