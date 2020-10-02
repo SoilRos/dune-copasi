@@ -39,7 +39,7 @@ contributing single features can be summarized by following these steps:
    being run by the [Gitlab CI](https://docs.gitlab.com/ee/ci/pipelines.html).
 7. **TEST**: Once implementation and test are finished, ensure that your MR is
    passing the different [pipelines](https://gitlab.dune-project.org/copasi/dune-copasi/-/tree/master/.ci).
-8. Update the [CHANGELOG.md](CHANGELOG.md) with changes to the interface. It
+8. Update the [CHANGELOG](CHANGELOG.md) with changes to the interface. It
    must include a link to the associated MR and a short description that
    summarizes the changes.
 9. **REVIEW**: Send the MR to review for approval unmarking the WIP and
