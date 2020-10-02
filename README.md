@@ -12,16 +12,8 @@ Solver for reaction-diffusion systems in multiple compartments
  * Neumann flux at the interface of compartments for variables with
    the same name on the two compartments
  * Easy to modify configuration file
- * Initial conditions can be a TIFF file or a math expression
- * Solved using the finite element or finite volume method
+ * Initial conditions can be a TIFF file or/and a math expression
+ * Using the finite element
  * Output in the VTK format
-
-This project is made under the umbrella of the
-[*Distributed and Unified Numerics Environment* `DUNE`](https://www.dune-project.org/) and the
-[*Biochemical System Simulator* `COPASI`](http://copasi.org/).
-Altought the rationale of the design is always driven by biochemical process (e.g. cell biology),
-this software is not limited to this scope and can be used for other processes involving reaction-diffusion systems.
-
-# Documentation
 
 Get started [here](https://dune-copasi.netlify.app/docs/).
