@@ -32,6 +32,7 @@ Types of changes
 
 ## [Unreleased]
 ### Added
+- User documentation !28
 - Scape VTK write by omitting `[writer]` section !24
 - Added Explicit and Diagonally Runge-Kutta time solvers !25
 - 3D simulations are now possible !27
