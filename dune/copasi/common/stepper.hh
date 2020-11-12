@@ -500,7 +500,11 @@ public:
   {
     Base::evolve(system,in,out,dt,end_time,callable);
 
+    if (not out)
+      return;
+
     // reduce last timestep adaptively until end_time is exactly reached
+    auto prev_out = out;
     while (FloatCmp::lt<double>(out.time, end_time)) {
       if (FloatCmp::gt<double>(dt, end_time - out.time)) {
         logger().detail("Reduce step to match end time: {:.2f}s -> {:.2f}"_fmt,
@@ -508,7 +512,11 @@ public:
                       end_time - out.time);
         dt = end_time - out.time;
       }
-      _stepper.evolve(system,in,out,dt,end_time,callable);
+      std::swap(prev_out, out);
+      _stepper.do_step(system, prev_out, out, dt);
+      if (not out)
+        out = prev_out; // return the last usable solution
+      callable(out);
     }
   }
 
